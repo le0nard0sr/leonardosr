@@ -1,6 +1,6 @@
-# AGENTS.md
+# CLAUDE.md
 
-> **Sincronização obrigatória:** Este arquivo e `CLAUDE.md` devem ser sempre idênticos (exceto pelo título `# AGENTS.md` / `# CLAUDE.md`). Qualquer alteração feita em um deve ser replicada imediatamente no outro.
+> **Sincronização obrigatória:** Este arquivo e `AGENTS.md` devem ser sempre idênticos (exceto pelo título `# CLAUDE.md` / `# AGENTS.md`). Qualquer alteração feita em um deve ser replicada imediatamente no outro.
 
 Responda sempre em português do Brasil.
 
