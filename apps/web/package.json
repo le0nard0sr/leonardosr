@@ -1,0 +1,35 @@
+{
+  "name": "@leonardosr/web",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@next/mdx": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "shiki": "latest"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "10.3.6",
+    "@storybook/addon-docs": "10.3.6",
+    "@storybook/nextjs": "10.3.6",
+    "@tailwindcss/postcss": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "storybook": "10.3.6",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  }
+}

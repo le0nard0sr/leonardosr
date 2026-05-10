@@ -1,0 +1,9 @@
+.git
+node_modules
+apps/web/.next
+apps/web/storybook-static
+apps/api/target
+.env
+npm-debug.log
+*.log
+

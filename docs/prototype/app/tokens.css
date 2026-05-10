@@ -1,0 +1,100 @@
+/* tokens.css — design tokens, light/dark, fonts, sizes */
+
+:root {
+  /* Type */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Instrument Serif", "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Type scale (modular) */
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-15: 15px;
+  --fs-16: 16px;
+  --fs-17: 17px;
+  --fs-18: 18px;
+  --fs-20: 20px;
+  --fs-24: 24px;
+  --fs-30: 30px;
+  --fs-36: 36px;
+  --fs-40: 40px;
+  --fs-48: 48px;
+  --fs-56: 56px;
+  --fs-72: 72px;
+
+  /* Layout */
+  --max-w: 1280px;
+  --max-w-text: 920px;
+  --gutter: 32px;
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+/* Dark theme — default */
+:root, [data-theme="dark"] {
+  --bg: #0d0e10;
+  --bg-subtle: #14161a;
+  --bg-mute: #1d2025;
+  --bg-inverse: #f6f5f1;
+
+  --fg: #ececec;
+  --fg-muted: #a1a4ab;
+  --fg-faint: #6f737b;
+
+  --border: #1f2228;
+  --border-strong: #2a2e35;
+
+  --accent: #d97757;
+  --accent-strong: #b95d3f;
+  --accent-soft: rgba(217, 119, 87, 0.15);
+
+  --success: #5fb87f;
+  --warning: #d4a847;
+  --danger: #d44747;
+
+  --code-bg: #0a0b0d;
+  --code-fg: #d8dae0;
+  --code-keyword: #c98edc;
+  --code-string: #9ec98e;
+  --code-num: #d4a847;
+  --code-comment: #5e6168;
+  --code-func: #7ea8e8;
+
+  color-scheme: dark;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg: #f6f5f1;
+  --bg-subtle: #efeee9;
+  --bg-mute: #e6e4dd;
+  --bg-inverse: #14161a;
+
+  --fg: #1a1c20;
+  --fg-muted: #4f535a;
+  --fg-faint: #82868d;
+
+  --border: #e0ddd4;
+  --border-strong: #c9c5b8;
+
+  --accent: #c25e3a;
+  --accent-strong: #a4492b;
+  --accent-soft: rgba(194, 94, 58, 0.12);
+
+  --success: #3d8a5c;
+  --warning: #b8862e;
+  --danger: #b8392c;
+
+  --code-bg: #1a1c20;
+  --code-fg: #ececec;
+  --code-keyword: #c98edc;
+  --code-string: #9ec98e;
+  --code-num: #d4a847;
+  --code-comment: #6f737b;
+  --code-func: #7ea8e8;
+
+  color-scheme: light;
+}
