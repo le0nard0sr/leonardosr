@@ -1,0 +1,35 @@
+{
+  "name": "leonardosr",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "web:dev": "npm --workspace @leonardosr/web run dev",
+    "web:build": "npm --workspace @leonardosr/web run build",
+    "web:lint": "npm --workspace @leonardosr/web run lint",
+    "web:typecheck": "npm --workspace @leonardosr/web run typecheck",
+    "storybook": "npm --workspace @leonardosr/web run storybook",
+    "build": "npm run web:build",
+    "lint": "npm run web:lint",
+    "typecheck": "npm run web:typecheck",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.0.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
+    "prettier": "^3.5.0"
+  },
+  "lint-staged": {
+    "apps/web/**/*.{ts,tsx,js,jsx,css,md,mdx,json}": [
+      "npm --workspace @leonardosr/web run lint",
+      "prettier --write"
+    ],
+    "*.{md,json,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}
