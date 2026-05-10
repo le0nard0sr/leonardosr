@@ -14,10 +14,9 @@ async function main() {
   }
 
   const { spawnSync } = await import("node:child_process");
-  const command = process.platform === "win32" ? "npx.cmd" : "npx";
-  const result = spawnSync(command, ["openapi-typescript", apiDocsUrl, "-o", output], {
+  const result = spawnSync("npx", ["openapi-typescript", apiDocsUrl, "-o", output], {
     stdio: "inherit",
-    shell: false,
+    shell: true,
   });
 
   if (result.status !== 0) {

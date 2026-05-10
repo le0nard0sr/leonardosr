@@ -1,5 +1,12 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
+export type ApiRequestInit = RequestInit & {
+  next?: {
+    revalidate?: number | false;
+    tags?: string[];
+  };
+};
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -11,7 +18,7 @@ export class ApiError extends Error {
 
 export async function apiRequest<T>(
   path: string,
-  init: RequestInit = {},
+  init: ApiRequestInit = {},
 ): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
