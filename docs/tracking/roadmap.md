@@ -27,6 +27,14 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 ### Atualização documental pós-M1
 
 - Status: Concluído
-- Evidência/verificação: `AGENTS.md` atualizado com stack fixada, regra de tracking, ciclo Git/GitHub e checagem de secrets antes de commit/push; `README.md` atualizado com comando do Storybook; `.gitignore` atualizado para ignorar `*.tsbuildinfo`; `docs/adr/013-postgresql-local-flyway-spotless.md` criado para registrar PostgreSQL 17 local, Flyway e Spotless; `docs/tracking/roadmap.md` atualizado com pendências pós-validação.
+- Evidência/verificação: `AGENTS.md` atualizado com stack fixada, regra de tracking, ciclo Git/GitHub e checagem de secrets antes de commit/push; `README.md` atualizado com comando do Storybook; `.gitignore` atualizado para ignorar `*.tsbuildinfo`; `docs/adr/014-postgresql-local-flyway-spotless.md` criado para registrar PostgreSQL 17 local, Flyway e Spotless; `docs/tracking/roadmap.md` atualizado com pendências pós-validação.
 - Pendências: nenhuma adicional.
+- Última atualização: 2026-05-10
+
+### Consolidação do PRD V3 como fonte de verdade
+
+- Status: Concluído
+- Evidência/verificação: `docs/prd/prd_leonardosr_site_pessoal_v3.md` mantido como PRD vigente; PRD anterior removido; `AGENTS.md` atualizado para apontar para o PRD V3; ADR pós-M1 de PostgreSQL/Flyway/Spotless renumerado para `docs/adr/014-postgresql-local-flyway-spotless.md`, preservando `ADR-013` para Sonar conforme PRD V3.
+- Impacto no M1: sem retrabalho técnico; mudanças da V3 afetam marcos posteriores, principalmente M2, M6/M8 e M8.
+- Pendências: criar `ADR-013` de Sonar no Marco 8, antes de configurar a análise no CI/CD.
 - Última atualização: 2026-05-10

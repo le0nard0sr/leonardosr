@@ -2,7 +2,7 @@
 
 **Produto:** Site pessoal e plataforma de conteúdo técnico de Leonardo Silva Ribeiro
 **Domínio:** `leonardosr.com.br`
-**Versão do PRD:** 1.1.1
+**Versão do PRD:** 1.1.3
 **Data:** 09/05/2026
 **Status:** Pronto para implementação assistida por Codex, Claude ou equipe de desenvolvimento
 **Perfil principal do projeto:** Portfólio profissional, autoridade técnica e hub de conteúdos sobre React, Next.js e Spring Boot
@@ -10,6 +10,35 @@
 ---
 
 ## Changelog
+
+### 1.1.2 → 1.1.3 (análise estática com Sonar)
+
+A versão 1.1.3 incorpora SonarQube como ferramenta de análise contínua de qualidade, segurança e manutenibilidade, sem alterar arquitetura nem antecipar complexidade:
+
+- **RNF05** ganhou subseção "Análise estática com Sonar", definindo cobertura para backend Java/Spring Boot e frontend TypeScript/Next.js, com Quality Gate inicialmente informativo.
+- **Marco 8** ganhou entrega de integração Sonar no pipeline de CI/CD e critério de conclusão correspondente.
+- **Tracking** ganhou tarefa T072 (classificada como Produção, prioridade Média).
+- **Seção 6.5** ganhou ADR-013 sobre escolha entre SonarQube Cloud e Server.
+- **Backlog futuro** registrou itens de evolução: Quality Gate bloqueante na branch principal, meta mínima de cobertura após estabilização e SonarQube Server local em Docker para aprendizado.
+- **Riscos** ganhou item sobre Quality Gate bloqueante prematuro com mitigação (iniciar informativo, evoluir gradualmente).
+
+A proposta deixa explícito que Sonar **não substitui** ESLint, Prettier, Spotless, testes automatizados, Sentry ou revisão manual — atua como camada complementar de inspeção contínua. SonarQube Cloud é priorizado pela simplicidade operacional e, conforme política comercial vigente, tende a ser a opção adequada para repositórios públicos (cenário esperado para vitrine técnica); SonarQube Server fica como alternativa para repositório privado, restrição de custo ou aprendizado em ambiente self-hosted.
+
+### 1.1.1 → 1.1.2 (refinamentos finais)
+
+A versão 1.1.2 incorpora 11 ajustes de precisão sem alteração de escopo:
+
+- **Tema claro/escuro**: redação ajustada para esclarecer que a implementação pode ser própria ou via biblioteca, desde que use cookie no servidor (não `localStorage`).
+- **`site_profile`**: adicionado campo `display_name` (nome público), que faltava no modelo apesar de RF01 referenciá-lo.
+- **Categoria removida**: "categoria" e "categoria principal" eliminadas de RF06, RF18 e modelo de dados. Tags cobrem a função de classificação editorial e SEO.
+- **Visibilidade pública (nova Seção 6.7)**: regra central explícita de que endpoints públicos, sitemap, RSS, busca e dados estruturados retornam apenas entidades `PUBLISHED` com `published_at` preenchido e ≤ data atual.
+- **Ciclo de vida da publicação (nova Seção 6.8)**: regras explícitas de `published_at` (set on first publish, never changed; re-publicação não altera; edições posteriores tocam apenas `updated_at`).
+- **Normalização de MDX para busca**: RF17 ganhou regra de normalização do MDX para texto pesquisável antes de compor o `tsvector`, evitando indexar nomes de componentes JSX como ruído.
+- **HTML bruto proibido em MDX na v1**: RF06.6 endurecida — HTML bruto vetado; habilitação futura via ADR específica.
+- **MIME types e limites de upload**: RF22 detalhou tipos permitidos (`image/jpeg`, `image/png`, `image/webp`, `application/pdf`), SVG fora da v1 e limites de tamanho por tipo de mídia.
+- **Anonimização manual de mensagem**: novo endpoint `POST /api/admin/contact-messages/{id}/anonymize` para atender solicitações LGPD individuais antes do prazo de 12 meses.
+- **Proteção de tags/tecnologias em uso**: RF18 e RF04 ganharam regra de bloqueio de exclusão física para tags e tecnologias associadas a conteúdos publicados; preserva links e SEO.
+- **`preview-validate` clarificado**: backend valida regras de domínio e allowlist; frontend Next.js valida compilação real do MDX. Ambas validações precisam estar OK para habilitar a transição `DRAFT` → `PUBLISHED`.
 
 ### 1.1 → 1.1.1 (saneamento)
 
@@ -183,7 +212,7 @@ O projeto deve incluir, desde sua primeira entrega completa:
 - **MDX** como formato oficial dos conteúdos técnicos, com biblioteca própria de componentes editoriais (ver RF06).
 - **Componentização reutilizável**, documentada em Storybook.
 - **Renderização híbrida** com preferência por páginas estáticas (SSG) ou ISR quando beneficiar SEO.
-- **Suporte a tema claro e escuro** com persistência via cookie lido pelo SSR. Implementação via `next-themes` configurado para SSR ou implementação própria com cookie + Server Component + classe no `<html>`.
+- **Suporte a tema claro e escuro** com persistência via cookie lido no servidor, evitando flash visual no carregamento inicial. O tema é aplicado no elemento `<html>` antes da renderização da página. A implementação pode ser própria, usando cookie + Server Components + classe no `<html>`, ou baseada em biblioteca como `next-themes`, desde que não dependa exclusivamente de `localStorage` e não gere troca perceptível de tema após a hidratação.
 - **Fontes locais** via `next/font/local` com `font-display: swap`. Padrão: uma família principal com variações de peso. Segunda fonte só com ganho visual claro registrado em ADR.
 - **Geração de tipos TypeScript** a partir do contrato OpenAPI exportado pelo backend, via `openapi-typescript`.
 - **Pré-compilação de gramáticas e temas Shiki** em build time.
@@ -273,6 +302,7 @@ Lista nominal inicial obrigatória:
 - **ADR-010** — Estratégia de cache e revalidação.
 - **ADR-011** — **Banco de dados como fonte de verdade para conteúdos publicados e rascunhos**, a partir da ativação do painel administrativo (Marco 6). O repositório poderá conter conteúdos seed e exemplos para popular o banco em desenvolvimento (via `data.sql` ou `CommandLineRunner`), mas não é a fonte primária após o admin estar em produção. Eventuais migrações de conteúdo do Git para o banco devem ser feitas via script versionado.
 - **ADR-012 (novo)** — Topologia de domínios e autenticação administrativa (ver Seção 6.6).
+- **ADR-013 (novo)** — SonarQube Cloud para análise estática contínua (ver RNF05): Cloud preferencial pela simplicidade operacional e custo zero em repositório público; Server como alternativa para repositório privado ou aprendizado em ambiente self-hosted.
 
 Novos ADRs criados conforme decisões relevantes surgirem.
 
@@ -398,7 +428,7 @@ Estudos de caso
 
 A página inicial deve apresentar, de forma clara e visualmente forte:
 
-- Nome profissional (vindo de `site_profile`).
+- Nome profissional (`site_profile.display_name`).
 - Frase de posicionamento.
 - Tecnologias principais.
 - Botões para projetos, conteúdos e contato.
@@ -488,6 +518,7 @@ Cada tecnologia deve conter:
 - Deve permitir filtrar por categoria.
 - Deve permitir vincular tecnologias a projetos e conteúdos.
 - Deve ser visualmente simples, usando cards ou badges.
+- Tecnologias associadas a entidades publicadas não podem ser excluídas fisicamente — a operação `DELETE` é bloqueada pelo backend com resposta informativa, exigindo desvinculação prévia (regra análoga à de tags em RF18).
 
 ---
 
@@ -571,7 +602,6 @@ Cada conteúdo deve conter:
 - Status (`DRAFT`, `PUBLISHED`, `ARCHIVED`).
 - Data agendada de publicação (`scheduled_at`, opcional, usado inicialmente para planejamento editorial; execução automática fica como evolução posterior).
 - Tags.
-- Categoria principal.
 - Imagem de capa (FK para `media_asset`).
 - Data de publicação.
 - Data de atualização.
@@ -593,7 +623,7 @@ Em artigos com mais de 1500 palavras:
 
 ### 6.5 Open Graph dinâmico
 
-Cada artigo, vídeo, projeto e série gera **OG image dinâmica** via `opengraph-image.tsx` do Next.js, com título do conteúdo, categoria e identidade visual do site. Imagem cacheada e estável. **Fallback:** OG image estática global definida para o caso de a geração dinâmica falhar.
+Cada artigo, vídeo, projeto e série gera **OG image dinâmica** via `opengraph-image.tsx` do Next.js, com título do conteúdo, tipo de conteúdo e identidade visual do site. Imagem cacheada e estável. **Fallback:** OG image estática global definida para o caso de a geração dinâmica falhar.
 
 ### 6.6 Regras de segurança e validação do MDX
 
@@ -605,29 +635,42 @@ A renderização do MDX ocorre no Next.js (Node), não no Spring Boot. A valida�
 - Validação de regras de domínio: status (`DRAFT`/`PUBLISHED`/`ARCHIVED`), autoria, tamanho máximo do `body`, slug único.
 - Validação por **allowlist de componentes** referenciados no MDX. Parser superficial detecta nomes de componentes JSX e rejeita qualquer um fora da biblioteca editorial registrada.
 - Validação de **imports proibidos**: parser que rejeita linhas `import` no MDX, sem exceção.
-- Sanitização de HTML bruto via **OWASP Java HTML Sanitizer**.
-  - Tags permitidas: `a`, `code`, `em`, `strong`, `ul`, `ol`, `li`, `blockquote`, `h2`–`h6`.
-  - Atributos permitidos: `href` em `<a>`, com schema validado (apenas `http`/`https`; nunca `javascript:` ou `data:`).
+- **HTML bruto proibido na versão inicial.** Tags HTML diretas no MDX são vetadas. Apenas componentes da biblioteca editorial e a sintaxe Markdown padrão são aceitos. Habilitação futura de subconjunto HTML deverá ser feita via ADR específica, com definição de tags permitidas, sanitização via **OWASP Java HTML Sanitizer** e testes de segurança.
 - URLs externas em imagens validadas contra allowlist do `site_profile`.
 
 **Frontend (Next.js / Node):**
 
 - Compilação real do MDX com componentes da biblioteca editorial.
 - Validação de renderização: o conteúdo precisa compilar e renderizar sem erros antes que o status possa virar `PUBLISHED`.
-- Sanitização adicional via **DOMPurify** (ou equivalente Node) caso HTML bruto seja permitido.
+- Sanitização adicional via **DOMPurify** (ou equivalente Node) mantida como dependência preventiva, **mas não exercitada na versão inicial** já que HTML bruto está proibido no backend (ver acima).
 - Geração de preview no admin antes da publicação.
 
 **Política operacional:**
 
-- Conteúdo com erro de compilação ou renderização não pode ser publicado (transição `DRAFT` → `PUBLISHED` é bloqueada pelo backend após receber retorno de validação do build de preview).
+- Conteúdo com erro de compilação ou renderização não pode ser publicado. **Fluxo de validação:** o admin chama `POST /api/admin/contents/{id}/preview-validate`; o backend valida regras de domínio, allowlist de componentes, imports proibidos e regras de segurança textual. Em paralelo, o frontend Next.js compila e renderiza o MDX localmente. **Apenas com ambas validações OK** a UI habilita a transição `DRAFT` → `PUBLISHED`.
 - Imports diretos no MDX são proibidos sem exceção.
 - Apenas componentes registrados na biblioteca editorial podem ser usados (allowlist).
-- HTML bruto é desabilitado por padrão; quando permitido, sanitizado com biblioteca compatível com a camada de renderização.
+- HTML bruto é proibido na versão inicial. Habilitação futura via ADR específica, com definição de tags permitidas, sanitização obrigatória e testes de segurança.
+
+### 6.7 Visibilidade pública
+
+Endpoints públicos, sitemap, RSS, busca pública, dados estruturados (JSON-LD) e quaisquer páginas indexáveis devem retornar **apenas entidades com `status = PUBLISHED`** e, quando aplicável, `published_at` preenchido e menor ou igual à data atual. Conteúdos `DRAFT`, `ARCHIVED`, sem `published_at` ou com publicação futura agendada **não devem aparecer** em rotas públicas, sitemap, RSS, busca pública ou dados estruturados.
+
+Esta regra é central e se aplica a todas as entidades publicáveis (`content`, `project`, `series`, `experience`).
+
+### 6.8 Regras de ciclo de vida da publicação
+
+- Ao publicar uma entidade pela primeira vez (transição `DRAFT` → `PUBLISHED`), o backend deve preencher `published_at` com a data/hora atual, **se ainda estiver nulo**.
+- Re-publicações (após `ARCHIVED` → `PUBLISHED`) **não alteram** `published_at`. Apenas `updated_at` é atualizado.
+- Edições posteriores em entidade já publicada atualizam apenas `updated_at`, sem tocar `published_at`.
+- O campo `scheduled_at` **não tem efeito em endpoints públicos** enquanto a publicação automática agendada não for implementada (Backlog futuro). Apenas entidades com `status = PUBLISHED` e `published_at` preenchido aparecem publicamente — `scheduled_at` é hoje apenas planejamento editorial visível no admin.
+
+Estas regras se aplicam a `content`, `project`, `series` e `experience`.
 
 ### Critérios de aceitação
 
 - Deve haver listagem geral de conteúdos.
-- Deve haver filtros por tipo, tecnologia, tag e categoria.
+- Deve haver filtros por tipo, tecnologia e tag.
 - Deve haver busca textual (RF17).
 - Deve haver página individual por conteúdo.
 - Artigos e vídeos devem poder aparecer juntos em listagens e trilhas.
@@ -930,6 +973,10 @@ O `content.search_vector` é recalculado em camada de aplicação (Spring Servic
 
 A montagem do `tsvector` é executada via **query nativa, função SQL armazenada ou repository específico**, para preservar os recursos do PostgreSQL FTS. O Spring Service orquestra; a construção em si é delegada à camada de banco.
 
+**Normalização do MDX para indexação:**
+
+Antes de compor o `search_vector`, o campo `body` em MDX deve ser **normalizado para texto pesquisável**: remoção de marcações JSX, nomes de componentes, atributos, frontmatter e qualquer trecho que não agregue valor à busca. Blocos de código podem ser incluídos ou omitidos conforme configuração, mas a decisão deve ser consistente em todo o sistema. A normalização é responsabilidade do Service que orquestra o recálculo, antes de delegar à query nativa.
+
 **Tratamento de NULL obrigatório via `coalesce`:**
 
 ```sql
@@ -953,9 +1000,9 @@ Mesma regra aplicada a `project.search_vector`.
 
 ---
 
-## RF18 — Tags e categorias
+## RF18 — Tags
 
-O site deve possuir sistema de tags e categorias.
+O site deve possuir sistema de tags.
 
 Exemplos de tags:
 
@@ -973,11 +1020,18 @@ Exemplos de tags:
 - SEO.
 - Acessibilidade.
 
+**Proteção contra exclusão de tags em uso:**
+
+Tags associadas a entidades publicadas (conteúdos, projetos ou experiências com `status = PUBLISHED`) **não podem ser excluídas fisicamente**. A operação `DELETE` deve ser bloqueada pelo backend com resposta informativa, exigindo desvinculação prévia da tag dos itens publicados. Esta regra preserva slugs e links públicos já indexados.
+
+A mesma regra se aplica a tecnologias (ver RF04).
+
 ### Critérios de aceitação
 
 - Cada tag deve ter página própria.
 - A página da tag deve listar conteúdos, vídeos e projetos relacionados.
 - Tags devem contribuir para navegação e SEO interno.
+- Exclusão de tag em uso é bloqueada pelo backend.
 
 ---
 
@@ -1102,12 +1156,36 @@ O backend deve implementar uma camada de storage compatível com S3, abstraída 
 - **`blur_data_url`:** gerado quando tecnicamente viável para imagens suportadas (formatos rasterizados comuns). Caso a geração falhe (formato não suportado, biblioteca indisponível), o asset permanece válido sem placeholder blur — campo fica `NULL`.
 - **`checksum`:** calculado e validado quando o provider de storage o expõe de forma compatível (ETag em S3-compatible, por exemplo). Em multipart upload, validação pode ser pulada com log de aviso. Em qualquer caso, ausência de checksum não bloqueia a confirmação.
 
+**Tipos de mídia permitidos e limites:**
+
+Tipos inicialmente permitidos no upload via admin:
+
+- `image/jpeg`
+- `image/png`
+- `image/webp`
+- `application/pdf`
+
+**SVG fica fora da versão inicial**, salvo ADR específica, por risco de scripts embutidos e necessidade de sanitização própria (com biblioteca como `svg-sanitizer` ou equivalente). Demais formatos (GIF, TIFF, BMP, vídeo, áudio) também ficam fora da v1.
+
+Limites de tamanho (configuráveis via env, com defaults):
+
+- Imagens de capa (`content.cover_image_id`, `project.cover_image_id`, `series.cover_image_id`, `seo_setting.default_og_image_id`): até **5 MB**.
+- Imagens internas em conteúdo MDX e diagramas de arquitetura (`ArchitectureFieldsDTO.diagram_media_id`): até **10 MB**.
+- PDF de currículo (`site_profile.curriculum_media_id`): até **10 MB**.
+
+Validação de tipo e tamanho ocorre em três pontos:
+
+1. **No `upload-url`**: backend rejeita `mime_type` fora da allowlist e `size_bytes` acima do limite antes de gerar URL pré-assinada.
+2. **Na URL pré-assinada**: configurada com `Content-Type` e `Content-Length` esperados, para que o storage rejeite uploads divergentes.
+3. **No `confirm`**: backend valida via HEAD que o objeto carregado bate com o tipo e tamanho declarados.
+
 ### Critérios de aceitação
 
 - Trocar provider deve exigir apenas implementação de novo adapter, sem alterar código de domínio.
 - Configuração de provider via variáveis de ambiente.
 - Fluxo PENDING → ACTIVE → DELETED implementado corretamente.
 - Bloqueio de exclusão com referência ativa funcionando.
+- MIME types e limites de tamanho validados nas três camadas.
 - Decisão registrada em ADR-007.
 
 ---
@@ -1178,7 +1256,7 @@ O projeto deve implementar:
 - Páginas dedicadas para cada vídeo, lab e arquitetura.
 - Imagens com texto alternativo (campo `alt_text` em `media_asset`).
 - Estratégia de links internos.
-- Páginas de tags e categorias indexáveis quando fizer sentido.
+- Páginas de tags indexáveis quando fizer sentido.
 - Controle de indexação de páginas administrativas e rascunhos.
 - Verificação no Google Search Console e Bing Webmaster Tools (preparação no Marco 5, ativação no Marco 8).
 - Configurações alimentadas pela entidade `seo_setting`.
@@ -1198,7 +1276,7 @@ O projeto deve implementar:
 
 - Área administrativa protegida por cookie de sessão (RF14, Seção 6.6).
 - Validação no frontend e backend.
-- Sanitização de conteúdo HTML/MDX em duas camadas (RF06.6: OWASP Java HTML Sanitizer no backend; DOMPurify no frontend/Node).
+- Validação de segurança do MDX em duas camadas (RF06.6): backend com allowlist de componentes, imports proibidos e bloqueio de HTML bruto; frontend com compilação e renderização real do MDX. **OWASP Java HTML Sanitizer** e **DOMPurify** ficam previstos como dependências preventivas, sem exercício na v1 (HTML bruto proibido). Sua ativação efetiva fica condicionada a ADR específica caso HTML bruto venha a ser habilitado no futuro.
 - Proteção contra XSS.
 - Proteção contra CSRF nas rotas administrativas com token explícito.
 - CORS configurado conforme Seção 6.6.
@@ -1229,6 +1307,35 @@ O projeto deve implementar:
 
 - Release Please ou changelog automático.
 - Checkstyle muito rígido.
+
+### Análise estática com Sonar
+
+O projeto deverá prever integração com **SonarQube Cloud** (provider preferencial) ou **SonarQube Server** (alternativa) para análise contínua de qualidade, segurança e manutenibilidade do código. A escolha entre as duas opções fica registrada em **ADR-013**.
+
+**Cobertura da análise**, quando aplicável:
+
+- Backend Java/Spring Boot.
+- Frontend TypeScript/Next.js.
+- Bugs.
+- Vulnerabilidades.
+- Security hotspots.
+- Code smells.
+- Duplicação de código.
+- Cobertura de testes (consumindo relatórios JaCoCo no backend e lcov no frontend, gerados pelo pipeline antes do scan).
+- Dívida técnica.
+- Quality Gate.
+
+**Política de Quality Gate em duas fases:**
+
+Na configuração inicial, o Quality Gate é **informativo** — serve como instrumento de aprendizado, inspeção e acompanhamento da qualidade, sem bloquear merges nem deploys. Após estabilização dos testes automatizados, da cobertura mínima e do pipeline de CI/CD, o Quality Gate poderá passar a **bloquear merges na branch principal**. A transição é registrada em ADR de evolução.
+
+**Sobre custo e licenciamento:**
+
+SonarQube Cloud será priorizado pela simplicidade operacional e, conforme política comercial vigente, tende a ser a opção mais adequada para repositórios públicos (cenário esperado para vitrine técnica do projeto). Caso o repositório seja privado ou haja restrição de custo, **SonarQube Server self-hosted** (containerizado via Docker) permanece como alternativa válida — com trade-off de operação adicional e ganho de aprendizado em DevOps.
+
+**Relação com outras ferramentas:**
+
+A inclusão do Sonar **não substitui** ESLint, Prettier, Spotless, testes automatizados, Sentry, revisão manual ou boas práticas de arquitetura. Sonar atua como **camada complementar de inspeção contínua**, especialmente útil para detectar duplicação de código, complexidade ciclomática, security hotspots e dívida técnica acumulada — dimensões que linters tradicionais cobrem parcialmente ou não cobrem.
 
 ## RNF06 — Observabilidade
 
@@ -1712,6 +1819,7 @@ Singleton (registro único, garantido via constraint ou validação no service).
 
 ```text
 id
+display_name             (ex.: "Leonardo Silva Ribeiro" — nome exibido publicamente)
 professional_title       (ex.: "Analista de TI · React · Next.js · Spring Boot")
 headline                 (frase de posicionamento da home)
 short_bio                (resumo da home)
@@ -1788,7 +1896,7 @@ PUT    /api/admin/contents/{id}
 DELETE /api/admin/contents/{id}
 POST   /api/admin/contents/{id}/publish
 POST   /api/admin/contents/{id}/archive
-POST   /api/admin/contents/{id}/preview-validate    (valida compilação MDX antes de publicar)
+POST   /api/admin/contents/{id}/preview-validate    (backend valida regras de domínio, allowlist, imports, segurança textual; compilação real do MDX é validada pelo frontend Next.js — habilita publish apenas quando ambas validações estiverem OK)
 
 GET    /api/admin/projects
 POST   /api/admin/projects
@@ -1824,6 +1932,7 @@ DELETE /api/admin/media-assets/{id}                 (bloqueia se houver referên
 
 GET    /api/admin/contact-messages
 PUT    /api/admin/contact-messages/{id}/read
+POST   /api/admin/contact-messages/{id}/anonymize    (anonimização manual antes dos 12 meses; típico em solicitação LGPD do titular)
 
 GET    /api/admin/profile
 PUT    /api/admin/profile
@@ -2139,6 +2248,7 @@ Entregas:
 - HTTPS.
 - **Plano de backup automatizado** com retenção rolling e teste de restore documentado.
 - **Job de anonimização LGPD** (Spring Scheduling) configurado.
+- **Integração com SonarQube Cloud** (ou SonarQube Server como alternativa) configurada no pipeline de CI/CD, com análise inicial do backend Java/Spring Boot e do frontend TypeScript/Next.js. Quality Gate em modo informativo. Geração de relatórios de cobertura (JaCoCo + lcov) integrada ao scan.
 - **Ativação SEO em produção:**
   - Verificação de domínio no Google Search Console.
   - Verificação de domínio no Bing Webmaster.
@@ -2155,6 +2265,7 @@ Critério de conclusão:
 - Storybook público acessível.
 - Backup executando diariamente com restore testado.
 - Job de anonimização agendado e funcional.
+- Análise Sonar executando no pipeline a cada PR e push na branch principal, com relatório disponível e Quality Gate inicialmente informativo.
 
 ---
 
@@ -2193,80 +2304,81 @@ Vitrine
 
 ## 16.2 Tabela de tracking
 
-| ID    | Marco    | Item                                                                                        | Tipo            | Classificação | Prioridade | Status  | Critério de conclusão                                                                      |
-| ----- | -------- | ------------------------------------------------------------------------------------------- | --------------- | ------------- | ---------- | ------- | ------------------------------------------------------------------------------------------ |
-| T001  | M1       | Criar repositório frontend                                                                  | Técnico         | Arquitetura   | Alta       | Backlog | Repositório criado com Next.js e TypeScript                                                |
-| T002  | M1       | Criar repositório backend                                                                   | Técnico         | Arquitetura   | Alta       | Backlog | Projeto Spring Boot executando localmente                                                  |
-| T003  | M1       | Configurar Docker Compose                                                                   | Técnico         | Arquitetura   | Alta       | Backlog | Frontend, backend, banco e MinIO executando localmente                                     |
-| T004  | M1       | Criar design system inicial                                                                 | UX/UI           | Vitrine       | Alta       | Backlog | Componentes base implementados                                                             |
-| T005  | M1       | Criar layout público base                                                                   | Frontend        | Arquitetura   | Alta       | Backlog | Header, footer e estrutura de páginas criados                                              |
-| T006  | M1       | Configurar tema claro e escuro via cookie                                                   | Frontend        | Arquitetura   | Média      | Backlog | Alternância funcionando sem flash visual                                                   |
-| T007  | M1       | Configurar SEO global                                                                       | SEO             | Arquitetura   | Alta       | Backlog | Metadata base configurada                                                                  |
-| T008  | M2       | Criar migrations iniciais                                                                   | Backend         | Arquitetura   | Alta       | Backlog | Flyway executando com tabelas principais                                                   |
-| T009  | M2       | Criar entidades principais                                                                  | Backend         | Arquitetura   | Alta       | Backlog | Entidades JPA implementadas                                                                |
-| T010  | M2       | Criar endpoints públicos                                                                    | Backend         | Arquitetura   | Alta       | Backlog | Endpoints retornando dados publicados                                                      |
-| T011  | M2       | Criar documentação OpenAPI                                                                  | Backend         | Arquitetura   | Média      | Backlog | Swagger acessível em ambiente local                                                        |
-| T012  | M3       | Implementar Home                                                                            | Frontend        | Produção      | Alta       | Backlog | Home responsiva com dados reais ou seed                                                    |
-| T013  | M3       | Implementar Sobre                                                                           | Frontend        | Produção      | Alta       | Backlog | Página com conteúdo profissional inicial                                                   |
-| T014  | M3       | Implementar Experiência                                                                     | Frontend        | Produção      | Média      | Backlog | Timeline ou cards de experiência                                                           |
-| T015  | M3       | Implementar Stack                                                                           | Frontend        | Produção      | Média      | Backlog | Tecnologias categorizadas                                                                  |
-| T016  | M3       | Implementar Projetos                                                                        | Frontend        | Produção      | Alta       | Backlog | Listagem e detalhe de projetos                                                             |
-| T017  | M3       | Implementar Contato                                                                         | Fullstack       | Produção      | Alta       | Backlog | Formulário validado e persistido                                                           |
-| T018  | M4       | Implementar listagem de conteúdos                                                           | Frontend        | Produção      | Alta       | Backlog | Lista com filtros por tipo e tag                                                           |
-| T019  | M4       | Implementar página de artigo                                                                | Frontend        | Produção      | Alta       | Backlog | Artigo renderizado com SEO próprio                                                         |
-| T020  | M4       | Implementar página de vídeo                                                                 | Frontend        | Produção      | Alta       | Backlog | Vídeo com embed otimizado e texto complementar                                             |
-| T021  | M4       | Implementar séries                                                                          | Fullstack       | Produção      | Média      | Backlog | Série com conteúdos ordenados via series_content                                           |
-| T022  | M4       | Implementar páginas de tags                                                                 | Frontend        | Produção      | Média      | Backlog | Tag exibe conteúdos relacionados                                                           |
-| T023  | M5       | Implementar sitemap dinâmico                                                                | SEO             | Produção      | Alta       | Backlog | Sitemap gerado com páginas públicas                                                        |
-| T024  | M5       | Implementar robots.txt                                                                      | SEO             | Produção      | Alta       | Backlog | Admin e rascunhos bloqueados                                                               |
-| T025  | M5       | Implementar JSON-LD                                                                         | SEO             | Produção      | Alta       | Backlog | Person, Article, VideoObject e BreadcrumbList                                              |
-| T026  | M5       | Implementar Open Graph                                                                      | SEO             | Produção      | Alta       | Backlog | Compartilhamento social com imagem e descrição                                             |
-| T027  | M5       | Implementar RSS Feed em /rss.xml (Next.js)                                                  | SEO             | Produção      | Média      | Backlog | Feed acessível e válido                                                                    |
-| T028  | M6       | Implementar autenticação admin                                                              | Segurança       | Arquitetura   | Alta       | Backlog | Admin protegido por cookie de sessão + CSRF                                                |
-| T029  | M6       | Implementar CRUD de conteúdos                                                               | Admin           | Produção      | Alta       | Backlog | Criar, editar, publicar e arquivar conteúdo                                                |
-| T030  | M6       | Implementar CRUD de projetos                                                                | Admin           | Produção      | Alta       | Backlog | Projetos gerenciáveis no painel                                                            |
-| T031  | M6       | Implementar CRUD de tags                                                                    | Admin           | Produção      | Média      | Backlog | Tags gerenciáveis no painel                                                                |
-| T032  | M6       | Implementar CRUD de séries                                                                  | Admin           | Produção      | Média      | Backlog | Séries gerenciáveis no painel com ordenação                                                |
-| T033  | M6       | Implementar editor MDX                                                                      | Admin           | Produção      | Alta       | Backlog | Conteúdo editável com pré-visualização                                                     |
-| T034  | M7       | Configurar GitHub integration                                                               | Integração      | Vitrine       | Média      | Backlog | Repositórios exibidos ou cadastrados manualmente                                           |
-| T035  | M7       | Configurar YouTube integration                                                              | Integração      | Produção      | Média      | Backlog | Vídeos cadastrados e exibidos corretamente                                                 |
-| T036  | M7       | Configurar Analytics (Plausible)                                                            | Métricas        | Produção      | Alta       | Backlog | Métricas básicas funcionando                                                               |
-| T037  | M8       | Criar testes backend                                                                        | Qualidade       | Produção      | Alta       | Backlog | Services e controllers testados                                                            |
-| T038  | M8       | Criar testes frontend                                                                       | Qualidade       | Produção      | Média      | Backlog | Componentes críticos testados                                                              |
-| T039  | M8       | Revisar acessibilidade                                                                      | Qualidade       | Produção      | Alta       | Backlog | Navegação por teclado e foco visível                                                       |
-| T040  | M8       | Revisar segurança                                                                           | Segurança       | Produção      | Alta       | Backlog | Admin, CORS, validação e sanitização revisados                                             |
-| T041  | M8       | Configurar CI/CD                                                                            | DevOps          | Produção      | Alta       | Backlog | Pipeline executando build e testes                                                         |
-| T042  | M8       | Realizar deploy frontend                                                                    | DevOps          | Produção      | Alta       | Backlog | Site público acessível                                                                     |
-| T043  | M8       | Realizar deploy backend                                                                     | DevOps          | Produção      | Alta       | Backlog | API pública acessível                                                                      |
-| T044  | M8       | Configurar domínio e HTTPS                                                                  | DevOps          | Produção      | Alta       | Backlog | `leonardosr.com.br` com HTTPS conforme Seção 6.6                                           |
-| T045  | M8       | Auditoria SEO final                                                                         | SEO             | Produção      | Alta       | Backlog | Sitemap, robots, metadata e schema validados                                               |
-| T046  | M1       | Configurar Storybook + Conventional Commits + pre-commit hooks                              | DevEx           | Vitrine       | Alta       | Backlog | Storybook rodando local; commits validados via Commitlint                                  |
-| T047  | M1       | Configurar next/font local e Shiki com pré-compilação                                       | Frontend        | Vitrine       | Alta       | Backlog | Fontes locais carregando; código com syntax highlighting Shiki                             |
-| T048  | M2       | Criar entidade media_asset, relacionamentos N:N e enum de status                            | Backend         | Arquitetura   | Alta       | Backlog | Entidades implementadas e migrations executadas                                            |
-| T049  | M2       | Configurar Postgres FTS para busca em português com coalesce                                | Backend         | Arquitetura   | Alta       | Backlog | Endpoint de busca retornando resultados ranqueados, busca por tag funcional                |
-| T050  | M2       | Configurar geração de tipos TS via OpenAPI                                                  | DevEx           | Arquitetura   | Alta       | Backlog | Tipos TS gerados no pipeline a partir do contrato                                          |
-| T051  | M2       | Implementar interface de storage com adapter R2 + MinIO local + fluxo de upload confirmado  | Backend         | Arquitetura   | Alta       | Backlog | Upload PENDING → ACTIVE → DELETED funcionando em ambos adapters                            |
-| T052  | M2       | Implementar interface de e-mail com adapter Resend e templates Thymeleaf                    | Backend         | Arquitetura   | Alta       | Backlog | Envio de notificação de contato funcionando                                                |
-| T053  | M3       | Criar páginas de Privacidade e Termos                                                       | Compliance      | Produção      | Alta       | Backlog | Páginas publicadas e linkadas no footer                                                    |
-| T054  | M3       | Implementar OG image dinâmica + fallback estática                                           | SEO             | Vitrine       | Alta       | Backlog | OG personalizada por conteúdo, com fallback funcionando                                    |
-| T055  | M4       | Implementar TOC e barra de progresso em artigos longos                                      | Frontend        | Vitrine       | Média      | Backlog | TOC obrigatório acima de 1500 palavras                                                     |
-| T056  | M4       | Implementar biblioteca de componentes editoriais MDX                                        | Frontend        | Vitrine       | Alta       | Backlog | Componentes documentados no Storybook                                                      |
-| T057a | M5       | Preparar Search Console e Bing Webmaster (criação de contas, tokens em seo_setting)         | SEO             | Produção      | Alta       | Backlog | Contas criadas; tokens prontos no admin                                                    |
-| T057b | M8       | Ativar Search Console e Bing Webmaster pós-deploy (verificação + submissão de sitemap)      | SEO             | Produção      | Alta       | Backlog | Domínios verificados, sitemaps submetidos, alertas configurados                            |
-| T058  | M5       | Configurar Lighthouse CI com budgets de laboratório                                         | Qualidade       | Produção      | Alta       | Backlog | Pipeline falha em regressões                                                               |
-| T059  | M7       | Configurar Sentry frontend e backend com release tracking                                   | Observabilidade | Produção      | Alta       | Backlog | Erros capturados em ambas camadas                                                          |
-| T060  | M7       | Configurar Plausible                                                                        | Métricas        | Produção      | Alta       | Backlog | Eventos chegando ao painel                                                                 |
-| T061  | M8       | Implementar plano de backup automatizado e testar restore                                   | DevOps          | Produção      | Alta       | Backlog | Backup diário, retenção rolling e restore validado                                         |
-| T062  | Contínuo | Manter pasta `/docs/adr/` com lista inicial de ADRs (incluindo ADR-012)                     | Documentação    | Vitrine       | Alta       | Backlog | ADR-001 a ADR-012 publicados; novos ADRs conforme necessidade                              |
-| T063  | M1       | Documentar topologia de domínios e autenticação (Seção 6.6 + ADR-012)                       | Arquitetura     | Arquitetura   | Alta       | Backlog | Decisão registrada e validada antes da implementação de auth                               |
-| T064  | M2       | Modelar e implementar site_profile com endpoints admin                                      | Backend         | Arquitetura   | Alta       | Backlog | CRUD de perfil funcional, alimentando home e Sobre                                         |
-| T065  | M2       | Modelar e implementar seo_setting com endpoints admin                                       | Backend         | Arquitetura   | Alta       | Backlog | Configurações SEO editáveis no admin                                                       |
-| T066  | M2       | Modelar series_content com sort_order e API de reordenação                                  | Backend         | Arquitetura   | Alta       | Backlog | Navegação anterior/próximo em séries funcionando                                           |
-| T067  | M2       | Implementar modelo editorial unificado (tipos LAB/ARCHITECTURE com DTOs específicos)        | Backend         | Arquitetura   | Alta       | Backlog | type_specific_fields validado por LabFieldsDTO e ArchitectureFieldsDTO                     |
-| T068  | M8       | Implementar job de anonimização LGPD (Spring Scheduling)                                    | Backend         | Produção      | Alta       | Backlog | Job diário anonimizando mensagens com mais de 12 meses                                     |
-| T069  | M2/M4/M6 | Implementar regras de segurança MDX (backend OWASP + frontend DOMPurify + preview-validate) | Segurança       | Arquitetura   | Alta       | Backlog | MDX validado antes de publicar em ambas camadas                                            |
-| T070  | M7       | Configurar SPF, DKIM e DMARC no domínio                                                     | DevOps          | Produção      | Alta       | Backlog | Registros DNS configurados; envio validado em Mail-Tester e MXToolbox sem alertas críticos |
-| T071  | M2       | Implementar política de seed inicial documentada                                            | Backend         | Arquitetura   | Alta       | Backlog | Seeds aplicados conforme Seção 14.6                                                        |
+| ID    | Marco    | Item                                                                                        | Tipo            | Classificação | Prioridade | Status  | Critério de conclusão                                                                                                                                                               |
+| ----- | -------- | ------------------------------------------------------------------------------------------- | --------------- | ------------- | ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T001  | M1       | Criar repositório frontend                                                                  | Técnico         | Arquitetura   | Alta       | Backlog | Repositório criado com Next.js e TypeScript                                                                                                                                         |
+| T002  | M1       | Criar repositório backend                                                                   | Técnico         | Arquitetura   | Alta       | Backlog | Projeto Spring Boot executando localmente                                                                                                                                           |
+| T003  | M1       | Configurar Docker Compose                                                                   | Técnico         | Arquitetura   | Alta       | Backlog | Frontend, backend, banco e MinIO executando localmente                                                                                                                              |
+| T004  | M1       | Criar design system inicial                                                                 | UX/UI           | Vitrine       | Alta       | Backlog | Componentes base implementados                                                                                                                                                      |
+| T005  | M1       | Criar layout público base                                                                   | Frontend        | Arquitetura   | Alta       | Backlog | Header, footer e estrutura de páginas criados                                                                                                                                       |
+| T006  | M1       | Configurar tema claro e escuro via cookie                                                   | Frontend        | Arquitetura   | Média      | Backlog | Alternância funcionando sem flash visual                                                                                                                                            |
+| T007  | M1       | Configurar SEO global                                                                       | SEO             | Arquitetura   | Alta       | Backlog | Metadata base configurada                                                                                                                                                           |
+| T008  | M2       | Criar migrations iniciais                                                                   | Backend         | Arquitetura   | Alta       | Backlog | Flyway executando com tabelas principais                                                                                                                                            |
+| T009  | M2       | Criar entidades principais                                                                  | Backend         | Arquitetura   | Alta       | Backlog | Entidades JPA implementadas                                                                                                                                                         |
+| T010  | M2       | Criar endpoints públicos                                                                    | Backend         | Arquitetura   | Alta       | Backlog | Endpoints retornando dados publicados                                                                                                                                               |
+| T011  | M2       | Criar documentação OpenAPI                                                                  | Backend         | Arquitetura   | Média      | Backlog | Swagger acessível em ambiente local                                                                                                                                                 |
+| T012  | M3       | Implementar Home                                                                            | Frontend        | Produção      | Alta       | Backlog | Home responsiva com dados reais ou seed                                                                                                                                             |
+| T013  | M3       | Implementar Sobre                                                                           | Frontend        | Produção      | Alta       | Backlog | Página com conteúdo profissional inicial                                                                                                                                            |
+| T014  | M3       | Implementar Experiência                                                                     | Frontend        | Produção      | Média      | Backlog | Timeline ou cards de experiência                                                                                                                                                    |
+| T015  | M3       | Implementar Stack                                                                           | Frontend        | Produção      | Média      | Backlog | Tecnologias categorizadas                                                                                                                                                           |
+| T016  | M3       | Implementar Projetos                                                                        | Frontend        | Produção      | Alta       | Backlog | Listagem e detalhe de projetos                                                                                                                                                      |
+| T017  | M3       | Implementar Contato                                                                         | Fullstack       | Produção      | Alta       | Backlog | Formulário validado e persistido                                                                                                                                                    |
+| T018  | M4       | Implementar listagem de conteúdos                                                           | Frontend        | Produção      | Alta       | Backlog | Lista com filtros por tipo e tag                                                                                                                                                    |
+| T019  | M4       | Implementar página de artigo                                                                | Frontend        | Produção      | Alta       | Backlog | Artigo renderizado com SEO próprio                                                                                                                                                  |
+| T020  | M4       | Implementar página de vídeo                                                                 | Frontend        | Produção      | Alta       | Backlog | Vídeo com embed otimizado e texto complementar                                                                                                                                      |
+| T021  | M4       | Implementar séries                                                                          | Fullstack       | Produção      | Média      | Backlog | Série com conteúdos ordenados via series_content                                                                                                                                    |
+| T022  | M4       | Implementar páginas de tags                                                                 | Frontend        | Produção      | Média      | Backlog | Tag exibe conteúdos relacionados                                                                                                                                                    |
+| T023  | M5       | Implementar sitemap dinâmico                                                                | SEO             | Produção      | Alta       | Backlog | Sitemap gerado com páginas públicas                                                                                                                                                 |
+| T024  | M5       | Implementar robots.txt                                                                      | SEO             | Produção      | Alta       | Backlog | Admin e rascunhos bloqueados                                                                                                                                                        |
+| T025  | M5       | Implementar JSON-LD                                                                         | SEO             | Produção      | Alta       | Backlog | Person, Article, VideoObject e BreadcrumbList                                                                                                                                       |
+| T026  | M5       | Implementar Open Graph                                                                      | SEO             | Produção      | Alta       | Backlog | Compartilhamento social com imagem e descrição                                                                                                                                      |
+| T027  | M5       | Implementar RSS Feed em /rss.xml (Next.js)                                                  | SEO             | Produção      | Média      | Backlog | Feed acessível e válido                                                                                                                                                             |
+| T028  | M6       | Implementar autenticação admin                                                              | Segurança       | Arquitetura   | Alta       | Backlog | Admin protegido por cookie de sessão + CSRF                                                                                                                                         |
+| T029  | M6       | Implementar CRUD de conteúdos                                                               | Admin           | Produção      | Alta       | Backlog | Criar, editar, publicar e arquivar conteúdo                                                                                                                                         |
+| T030  | M6       | Implementar CRUD de projetos                                                                | Admin           | Produção      | Alta       | Backlog | Projetos gerenciáveis no painel                                                                                                                                                     |
+| T031  | M6       | Implementar CRUD de tags                                                                    | Admin           | Produção      | Média      | Backlog | Tags gerenciáveis no painel                                                                                                                                                         |
+| T032  | M6       | Implementar CRUD de séries                                                                  | Admin           | Produção      | Média      | Backlog | Séries gerenciáveis no painel com ordenação                                                                                                                                         |
+| T033  | M6       | Implementar editor MDX                                                                      | Admin           | Produção      | Alta       | Backlog | Conteúdo editável com pré-visualização                                                                                                                                              |
+| T034  | M7       | Configurar GitHub integration                                                               | Integração      | Vitrine       | Média      | Backlog | Repositórios exibidos ou cadastrados manualmente                                                                                                                                    |
+| T035  | M7       | Configurar YouTube integration                                                              | Integração      | Produção      | Média      | Backlog | Vídeos cadastrados e exibidos corretamente                                                                                                                                          |
+| T036  | M7       | Configurar Analytics (Plausible)                                                            | Métricas        | Produção      | Alta       | Backlog | Métricas básicas funcionando                                                                                                                                                        |
+| T037  | M8       | Criar testes backend                                                                        | Qualidade       | Produção      | Alta       | Backlog | Services e controllers testados                                                                                                                                                     |
+| T038  | M8       | Criar testes frontend                                                                       | Qualidade       | Produção      | Média      | Backlog | Componentes críticos testados                                                                                                                                                       |
+| T039  | M8       | Revisar acessibilidade                                                                      | Qualidade       | Produção      | Alta       | Backlog | Navegação por teclado e foco visível                                                                                                                                                |
+| T040  | M8       | Revisar segurança                                                                           | Segurança       | Produção      | Alta       | Backlog | Admin, CORS, validação e sanitização revisados                                                                                                                                      |
+| T041  | M8       | Configurar CI/CD                                                                            | DevOps          | Produção      | Alta       | Backlog | Pipeline executando build e testes                                                                                                                                                  |
+| T042  | M8       | Realizar deploy frontend                                                                    | DevOps          | Produção      | Alta       | Backlog | Site público acessível                                                                                                                                                              |
+| T043  | M8       | Realizar deploy backend                                                                     | DevOps          | Produção      | Alta       | Backlog | API pública acessível                                                                                                                                                               |
+| T044  | M8       | Configurar domínio e HTTPS                                                                  | DevOps          | Produção      | Alta       | Backlog | `leonardosr.com.br` com HTTPS conforme Seção 6.6                                                                                                                                    |
+| T045  | M8       | Auditoria SEO final                                                                         | SEO             | Produção      | Alta       | Backlog | Sitemap, robots, metadata e schema validados                                                                                                                                        |
+| T046  | M1       | Configurar Storybook + Conventional Commits + pre-commit hooks                              | DevEx           | Vitrine       | Alta       | Backlog | Storybook rodando local; commits validados via Commitlint                                                                                                                           |
+| T047  | M1       | Configurar next/font local e Shiki com pré-compilação                                       | Frontend        | Vitrine       | Alta       | Backlog | Fontes locais carregando; código com syntax highlighting Shiki                                                                                                                      |
+| T048  | M2       | Criar entidade media_asset, relacionamentos N:N e enum de status                            | Backend         | Arquitetura   | Alta       | Backlog | Entidades implementadas e migrations executadas                                                                                                                                     |
+| T049  | M2       | Configurar Postgres FTS para busca em português com coalesce                                | Backend         | Arquitetura   | Alta       | Backlog | Endpoint de busca retornando resultados ranqueados, busca por tag funcional                                                                                                         |
+| T050  | M2       | Configurar geração de tipos TS via OpenAPI                                                  | DevEx           | Arquitetura   | Alta       | Backlog | Tipos TS gerados no pipeline a partir do contrato                                                                                                                                   |
+| T051  | M2       | Implementar interface de storage com adapter R2 + MinIO local + fluxo de upload confirmado  | Backend         | Arquitetura   | Alta       | Backlog | Upload PENDING → ACTIVE → DELETED funcionando em ambos adapters                                                                                                                     |
+| T052  | M2       | Implementar interface de e-mail com adapter Resend e templates Thymeleaf                    | Backend         | Arquitetura   | Alta       | Backlog | Envio de notificação de contato funcionando                                                                                                                                         |
+| T053  | M3       | Criar páginas de Privacidade e Termos                                                       | Compliance      | Produção      | Alta       | Backlog | Páginas publicadas e linkadas no footer                                                                                                                                             |
+| T054  | M3       | Implementar OG image dinâmica + fallback estática                                           | SEO             | Vitrine       | Alta       | Backlog | OG personalizada por conteúdo, com fallback funcionando                                                                                                                             |
+| T055  | M4       | Implementar TOC e barra de progresso em artigos longos                                      | Frontend        | Vitrine       | Média      | Backlog | TOC obrigatório acima de 1500 palavras                                                                                                                                              |
+| T056  | M4       | Implementar biblioteca de componentes editoriais MDX                                        | Frontend        | Vitrine       | Alta       | Backlog | Componentes documentados no Storybook                                                                                                                                               |
+| T057a | M5       | Preparar Search Console e Bing Webmaster (criação de contas, tokens em seo_setting)         | SEO             | Produção      | Alta       | Backlog | Contas criadas; tokens prontos no admin                                                                                                                                             |
+| T057b | M8       | Ativar Search Console e Bing Webmaster pós-deploy (verificação + submissão de sitemap)      | SEO             | Produção      | Alta       | Backlog | Domínios verificados, sitemaps submetidos, alertas configurados                                                                                                                     |
+| T058  | M5       | Configurar Lighthouse CI com budgets de laboratório                                         | Qualidade       | Produção      | Alta       | Backlog | Pipeline falha em regressões                                                                                                                                                        |
+| T059  | M7       | Configurar Sentry frontend e backend com release tracking                                   | Observabilidade | Produção      | Alta       | Backlog | Erros capturados em ambas camadas                                                                                                                                                   |
+| T060  | M7       | Configurar Plausible                                                                        | Métricas        | Produção      | Alta       | Backlog | Eventos chegando ao painel                                                                                                                                                          |
+| T061  | M8       | Implementar plano de backup automatizado e testar restore                                   | DevOps          | Produção      | Alta       | Backlog | Backup diário, retenção rolling e restore validado                                                                                                                                  |
+| T062  | Contínuo | Manter pasta `/docs/adr/` com lista inicial de ADRs (incluindo ADR-012 e ADR-013)           | Documentação    | Vitrine       | Alta       | Backlog | ADR-001 a ADR-013 publicados; novos ADRs conforme necessidade                                                                                                                       |
+| T063  | M1       | Documentar topologia de domínios e autenticação (Seção 6.6 + ADR-012)                       | Arquitetura     | Arquitetura   | Alta       | Backlog | Decisão registrada e validada antes da implementação de auth                                                                                                                        |
+| T064  | M2       | Modelar e implementar site_profile com endpoints admin                                      | Backend         | Arquitetura   | Alta       | Backlog | CRUD de perfil funcional, alimentando home e Sobre                                                                                                                                  |
+| T065  | M2       | Modelar e implementar seo_setting com endpoints admin                                       | Backend         | Arquitetura   | Alta       | Backlog | Configurações SEO editáveis no admin                                                                                                                                                |
+| T066  | M2       | Modelar series_content com sort_order e API de reordenação                                  | Backend         | Arquitetura   | Alta       | Backlog | Navegação anterior/próximo em séries funcionando                                                                                                                                    |
+| T067  | M2       | Implementar modelo editorial unificado (tipos LAB/ARCHITECTURE com DTOs específicos)        | Backend         | Arquitetura   | Alta       | Backlog | type_specific_fields validado por LabFieldsDTO e ArchitectureFieldsDTO                                                                                                              |
+| T068  | M8       | Implementar job de anonimização LGPD (Spring Scheduling)                                    | Backend         | Produção      | Alta       | Backlog | Job diário anonimizando mensagens com mais de 12 meses                                                                                                                              |
+| T069  | M2/M4/M6 | Implementar regras de segurança MDX (backend OWASP + frontend DOMPurify + preview-validate) | Segurança       | Arquitetura   | Alta       | Backlog | MDX validado antes de publicar em ambas camadas                                                                                                                                     |
+| T070  | M7       | Configurar SPF, DKIM e DMARC no domínio                                                     | DevOps          | Produção      | Alta       | Backlog | Registros DNS configurados; envio validado em Mail-Tester e MXToolbox sem alertas críticos                                                                                          |
+| T071  | M2       | Implementar política de seed inicial documentada                                            | Backend         | Arquitetura   | Alta       | Backlog | Seeds aplicados conforme Seção 14.6                                                                                                                                                 |
+| T072  | M8       | Configurar Sonar (Cloud ou Server) no pipeline CI/CD                                        | Qualidade       | Produção      | Média      | Backlog | Análise Sonar executando para backend e frontend a cada PR e push, com relatórios de cobertura (JaCoCo + lcov) integrados, Quality Gate inicialmente informativo, ADR-013 publicado |
 
 ---
 
@@ -2323,33 +2435,35 @@ O produto será considerado entregue quando:
 - Storybook público estiver acessível.
 - Plano de backup com restore testado estiver em produção.
 - Job de anonimização LGPD estiver agendado e funcional.
+- Análise Sonar executando no pipeline (com Quality Gate informativo) e ADR-013 publicado.
 - Sentry e Plausible estiverem capturando dados.
-- Lista inicial de ADRs (ADR-001 a ADR-012) estiver publicada.
+- Lista inicial de ADRs (ADR-001 a ADR-013) estiver publicada.
 - Documentação de instalação e deploy estiver disponível.
 
 ---
 
 ## 20. Riscos e mitigação
 
-| Risco                                      | Impacto | Mitigação                                                                                                                |
-| ------------------------------------------ | ------: | ------------------------------------------------------------------------------------------------------------------------ |
-| Escopo muito amplo                         |    Alto | Trabalhar por marcos, mantendo tracking atualizado; usar classificação tripartite para priorizar dentro de cada marco    |
-| Backend atrasar publicação                 |   Médio | Permitir seed ou conteúdo estático temporário                                                                            |
-| Painel admin consumir muito tempo          |    Alto | Priorizar CRUDs essenciais primeiro                                                                                      |
-| SEO ser tratado tardiamente                |    Alto | Implementar SEO desde as primeiras páginas; preparação no M5, ativação no M8                                             |
-| Vídeos deixarem o site pesado              |   Médio | Usar thumbnails na listagem e embed apenas no detalhe, com lazy loading                                                  |
-| Falta de conteúdo inicial                  |   Médio | Criar artigos e projetos seed antes do lançamento (Seção 14.6)                                                           |
-| Exposição indevida do admin                |    Alto | Bloquear admin no robots, proteger com cookie de sessão + CSRF + topologia validada                                      |
-| Dependência de APIs externas               |   Médio | Criar fallback manual para GitHub e YouTube; usar adapters para storage e e-mail                                         |
-| Acúmulo de complexidade nas integrações    |   Médio | Usar interfaces e adapters; configurar uma integração de cada vez no Marco 7                                             |
-| Perda de dados em produção                 |    Alto | Plano de backup automatizado com retenção rolling e teste de restore trimestral                                          |
-| Não conformidade LGPD                      |    Alto | RF21 implementado no Marco 3 e job de anonimização automática no Marco 8                                                 |
-| Erros não detectados em produção           |   Médio | Sentry configurado no Marco 7                                                                                            |
-| Regressões de performance                  |   Médio | Lighthouse CI no pipeline com budgets configurados                                                                       |
-| XSS via MDX vindo do banco                 |    Alto | Validação de segurança em duas camadas (backend OWASP + frontend DOMPurify); allowlist de componentes; imports proibidos |
-| E-mail caindo em spam                      |   Médio | DNS de e-mail configurado (SPF/DKIM/DMARC) no Marco 7 com validação em ferramentas                                       |
-| Auth incompatível com infra                |    Alto | Topologia decidida em Seção 6.6 e ADR-012 antes da implementação                                                         |
-| Sobrescrita acidental de conteúdo no admin |   Médio | `updated_at` visível e botão "duplicar antes de editar" (versionamento completo no backlog futuro)                       |
+| Risco                                                                                                                                  | Impacto | Mitigação                                                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Escopo muito amplo                                                                                                                     |    Alto | Trabalhar por marcos, mantendo tracking atualizado; usar classificação tripartite para priorizar dentro de cada marco                                                                  |
+| Backend atrasar publicação                                                                                                             |   Médio | Permitir seed ou conteúdo estático temporário                                                                                                                                          |
+| Painel admin consumir muito tempo                                                                                                      |    Alto | Priorizar CRUDs essenciais primeiro                                                                                                                                                    |
+| SEO ser tratado tardiamente                                                                                                            |    Alto | Implementar SEO desde as primeiras páginas; preparação no M5, ativação no M8                                                                                                           |
+| Vídeos deixarem o site pesado                                                                                                          |   Médio | Usar thumbnails na listagem e embed apenas no detalhe, com lazy loading                                                                                                                |
+| Falta de conteúdo inicial                                                                                                              |   Médio | Criar artigos e projetos seed antes do lançamento (Seção 14.6)                                                                                                                         |
+| Exposição indevida do admin                                                                                                            |    Alto | Bloquear admin no robots, proteger com cookie de sessão + CSRF + topologia validada                                                                                                    |
+| Dependência de APIs externas                                                                                                           |   Médio | Criar fallback manual para GitHub e YouTube; usar adapters para storage e e-mail                                                                                                       |
+| Acúmulo de complexidade nas integrações                                                                                                |   Médio | Usar interfaces e adapters; configurar uma integração de cada vez no Marco 7                                                                                                           |
+| Perda de dados em produção                                                                                                             |    Alto | Plano de backup automatizado com retenção rolling e teste de restore trimestral                                                                                                        |
+| Não conformidade LGPD                                                                                                                  |    Alto | RF21 implementado no Marco 3 e job de anonimização automática no Marco 8                                                                                                               |
+| Erros não detectados em produção                                                                                                       |   Médio | Sentry configurado no Marco 7                                                                                                                                                          |
+| Regressões de performance                                                                                                              |   Médio | Lighthouse CI no pipeline com budgets configurados                                                                                                                                     |
+| XSS via MDX vindo do banco                                                                                                             |    Alto | Validação de segurança em duas camadas (backend OWASP + frontend DOMPurify); allowlist de componentes; imports proibidos                                                               |
+| E-mail caindo em spam                                                                                                                  |   Médio | DNS de e-mail configurado (SPF/DKIM/DMARC) no Marco 7 com validação em ferramentas                                                                                                     |
+| Auth incompatível com infra                                                                                                            |    Alto | Topologia decidida em Seção 6.6 e ADR-012 antes da implementação                                                                                                                       |
+| Sobrescrita acidental de conteúdo no admin                                                                                             |   Médio | `updated_at` visível e botão "duplicar antes de editar" (versionamento completo no backlog futuro)                                                                                     |
+| Quality Gate do Sonar configurado cedo demais bloqueia o desenvolvimento por ruídos, falsos positivos ou ausência inicial de cobertura |   Médio | Iniciar com Quality Gate informativo (não bloqueante); revisar achados gradualmente; tornar bloqueante apenas após maturidade mínima de testes e pipeline (ver RNF05 e Backlog futuro) |
 
 ---
 
@@ -2379,6 +2493,9 @@ Mesmo com escopo completo inicial, estes itens podem ficar como evolução poste
 - **React Email** com etapa Node de pré-renderização documentada em ADR (caso seja desejado como vitrine futura).
 - **RBAC granular** com papéis adicionais (`EDITOR`, `REVIEWER`).
 - **Status por relação na série** (`status_in_series`).
+- **Quality Gate bloqueante na branch principal**: evoluir o Sonar de modo informativo para bloqueante em PRs e pushes na main, após estabilização de testes e cobertura.
+- **Meta mínima de cobertura de testes**: definir percentual mínimo (a calibrar após primeiros ciclos com dados reais; nunca antes da maturidade dos testes).
+- **SonarQube Server local em Docker**: subir Sonar self-hosted via Docker Compose como exercício de DevOps e alternativa a Cloud. Não obrigatório no fluxo de desenvolvimento padrão.
 
 ---
 
@@ -2387,7 +2504,7 @@ Mesmo com escopo completo inicial, estes itens podem ficar como evolução poste
 Use o seguinte comando como ponto de partida:
 
 ```text
-Você é um engenheiro de software sênior responsável por implementar o produto descrito neste PRD 1.1.1.
+Você é um engenheiro de software sênior responsável por implementar o produto descrito neste PRD 1.1.3.
 
 Leia integralmente o PRD e implemente o projeto por marcos, começando pelo Marco 1.
 
@@ -2398,14 +2515,14 @@ Regras:
 4. Use Tailwind CSS v4 como padrão de estilização (CSS global apenas para tipografia MDX, blocos de código e ajustes pontuais).
 5. Use MDX como formato de conteúdo, com biblioteca própria de componentes editoriais documentada no Storybook.
 6. Use Spring Boot, Java, PostgreSQL, Flyway e Spring Security no backend.
-7. Implemente camada de storage abstrata (interface + adapter R2 + adapter MinIO local) com fluxo de upload pré-assinado e confirmação (PENDING → ACTIVE → DELETED).
+7. Implemente camada de storage abstrata (interface + adapter R2 + adapter MinIO local) com fluxo de upload pré-assinado e confirmação (PENDING → ACTIVE → DELETED). Aceite apenas image/jpeg, image/png, image/webp e application/pdf na v1; SVG só com ADR específica; limites de 5 MB para capas e OG, 10 MB para imagens internas, diagramas e PDF de currículo.
 8. Implemente camada de e-mail abstrata (interface + adapter Resend) com templates em Thymeleaf no backend (NÃO use React Email).
 9. Use cookie de sessão HttpOnly + Secure para auth admin, conforme Seção 6.6 (SameSite=Lax na topologia preferencial; Strict apenas se validado em ADR-012). CSRF protection com token explícito.
 10. Adote a topologia de domínios da Seção 6.6 e registre em ADR-012 antes de implementar autenticação.
 11. Configure Postgres Full-Text Search com dicionário em português, coalesce para campos nullable e montagem do tsvector via SQL nativo.
 12. Modelo editorial unificado: tipos LAB e ARCHITECTURE são content com type_specific_fields validados por LabFieldsDTO e ArchitectureFieldsDTO. SERIES NÃO é tipo de conteúdo — é coleção via series_content com sort_order.
 13. LGPD: anonimização (não soft delete) de mensagens de contato após 12 meses via Spring Scheduling.
-14. Segurança MDX em duas camadas: backend (OWASP Java HTML Sanitizer, allowlist de componentes, imports proibidos) + frontend Next.js (compilação real, DOMPurify se houver HTML bruto).
+14. Segurança MDX em duas camadas: backend (OWASP Java HTML Sanitizer disponível mas não exercitado na v1, allowlist de componentes, imports proibidos, HTML bruto proibido) + frontend Next.js (compilação real, DOMPurify mantido como dependência preventiva mas não exercitado). HTML bruto em MDX é proibido na v1; habilitação futura via ADR. Endpoint `preview-validate` no backend valida domínio/allowlist; frontend Next.js valida compilação real; ambas precisam estar OK para publicar.
 15. Gere tipos TypeScript no frontend a partir do OpenAPI exportado pelo backend.
 16. RSS é gerado pelo Next.js em /rss.xml, NÃO é endpoint do backend.
 17. Crie código limpo, organizado por domínio e com boa separação de responsabilidades.
@@ -2425,6 +2542,7 @@ Regras:
 31. Para qualquer componente do design system, documente no Storybook (Definition of Done).
 32. Configure SPF, DKIM e DMARC no Marco 7 antes de validar envio de e-mail em produção.
 33. Search Console e Bing Webmaster: preparação no Marco 5 (criar contas, gerar tokens em seo_setting), ativação no Marco 8 (verificar domínio, submeter sitemap).
+34. SonarQube Cloud (preferencial) ou Server (alternativa) configurado no Marco 8, com análise contínua de backend e frontend, integração de relatórios de cobertura (JaCoCo + lcov) e Quality Gate em modo informativo na primeira fase. Não substitui ESLint, Prettier, Spotless, testes ou Sentry. Decisão registrada em ADR-013.
 
 Comece criando a estrutura inicial do repositório, o layout base do frontend, o projeto Spring Boot, o Docker Compose com MinIO, a configuração inicial de SEO global, o Storybook, os pre-commit hooks e os ADRs ADR-001, ADR-002, ADR-003 e ADR-012 (topologia).
 ```
@@ -2437,6 +2555,6 @@ Este projeto deve ser tratado como uma plataforma pessoal de longo prazo, não a
 
 O próprio site deve demonstrar aquilo que comunica: domínio em React, Next.js, Spring Boot, arquitetura web moderna, padrões como Ports & Adapters, boas práticas de desenvolvimento, performance, acessibilidade, segurança e SEO.
 
-A versão 1.1.1 do PRD não reduziu escopo nem antecipou lançamento — incorporou rigor arquitetural (modelo editorial unificado de verdade, topologia de domínios decidida, camadas de abstração com providers iniciais explícitos), correções factuais (SameSite e same-site, sanitização compatível com a camada de renderização, CrUX condicionado a volume), governança (papel ADMIN único, política de seed, banco como fonte de verdade pós-Marco 6) e refinamentos (anonimização LGPD, DNS de e-mail, RSS no Next.js, Search Console em duas etapas).
+A versão 1.1.3 do PRD não reduziu escopo nem antecipou lançamento — manteve as bases das versões anteriores e incluiu **análise estática contínua via Sonar** como camada complementar de inspeção, com Quality Gate informativo na primeira fase e evolução para bloqueante registrada no Backlog futuro. A inclusão é compatível com o objetivo de aprendizado (Sonar é ferramenta padrão de mercado em projetos profissionais) e com o posicionamento de vitrine técnica.
 
 Está pronto para implementação assistida por IA.

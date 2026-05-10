@@ -4,7 +4,7 @@ Responda sempre em português do Brasil.
 
 ## Fonte de verdade
 
-- Use `docs/prd/prd_leonardosr_site_pessoal_v2.md` como fonte principal de produto, arquitetura, requisitos e Definition of Done.
+- Use `docs/prd/prd_leonardosr_site_pessoal_v3.md` como fonte principal de produto, arquitetura, requisitos e Definition of Done.
 - Use `docs/prototype/` apenas como referência visual descartável: navegação, densidade, hierarquia, tom, tokens e padrões de tela. Não copie a arquitetura do protótipo, CDN, Babel no browser, hash router ou dados mockados como implementação final.
 - Use `docs/tracking/roadmap.md` como controle operacional de execução dos marcos.
 - O PRD é referência de produto; o roadmap é a fonte oficial de progresso, evidências, pendências e bloqueios.
