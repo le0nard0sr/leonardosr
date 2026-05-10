@@ -31,6 +31,29 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 - Pendências: nenhuma adicional.
 - Última atualização: 2026-05-10
 
+## Marco 2 — Modelo de dados, API pública e contratos
+
+### Implementação inicial do M2
+
+- Status: Em andamento
+- Evidência/verificação: branch `m2/modelo-dados-api-publica` criada; migration Flyway `V1__m2_initial_domain.sql`; entidades JPA, repositories, services, endpoints públicos e endpoints admin mínimos adicionados; validação parcial de MDX (`preview-validate`), storage/e-mail por portas, seeds idempotentes, geração OpenAPI/TypeScript resiliente, ADR-004, ADR-007, ADR-009 e ADR-011 criados.
+- Verificações executadas: `mvn -f apps/api test` passou com 5 testes; `mvn -f apps/api spotless:check` passou; `npm run web:typecheck` passou; `npm run web:lint` passou; `npm run web:build` passou fora do sandbox após falha `EPERM` no build do Next.js; `npm --workspace @leonardosr/web run generate:api` passou com aviso esperado de API local indisponível.
+- Revisão pós-implementação: corrigido `NoopStorageService.head` para não quebrar `confirm` em dev; pipeline de e-mail passou a renderizar template Thymeleaf também no noop; adapter Resend por HTTP adicionado; ADR-007 explicitou uso do adapter S3-compatible para R2; reorder rejeita duplicatas; validação MDX trata URL malformada; `published_at` também é protegido em update; seeds ampliados para ~15 tags.
+- Verificações pós-revisão: `mvn -f apps/api test` passou com 7 testes; `mvn -f apps/api spotless:check` passou.
+- Endurecimento (rodada 4): `ResendEmailService` agora serializa payload via Jackson `ObjectMapper` e valida `RESEND_API_KEY`/`from`/`admin-to` em `@PostConstruct`; `application-test.yml` migrado para PostgreSQL via Testcontainers através de `AbstractIntegrationTest` (suite IT com `@SpringBootTest` real isolada via `maven-failsafe-plugin` e `-DskipITs=false`); `LeonardoSrApiApplicationTests` renomeado para `LeonardoSrApiApplicationIT` com smoke `contextLoads`; cobertura IT adicionada para regras de domínio (`ContentLifecycleIT`, `PublicContentRepositoryIT`, `MediaAssetServiceIT`, `TaxonomyServiceIT`, `SeriesServiceIT`); endpoint `/api/public/contents` ganhou filtros opcionais `?tag=` e `?technology=` (via `ContentRepository.findPublicContents` JPQL) e `tags/{slug}` passou a usar query dedicada em vez de filtro em memória; `TypeSpecificFieldsValidator` agora desserializa `Map` para `LabFieldsDTO`/`ArchitectureFieldsDTO` com Jackson e aplica Bean Validation, integrado ao endpoint `preview-validate`; ADR-004, ADR-009 e ADR-011 reescritas com alternativas consideradas e consequências detalhadas.
+- Revisão Codex pós-rodada 4: corrigida validação cascata de `ArchitectureComponentDTO` em `type_specific_fields`; campos URL de `LabFieldsDTO` agora usam Bean Validation de URL; `ResendEmailService` recebeu timeout de conexão/requisição; serialização pública de séries passou a filtrar conteúdos não publicados/futuros.
+- Verificações pós-revisão Codex: `mvn -B -f apps/api/pom.xml verify` passou com 12 testes unitários e ITs pulados por padrão; `mvn -B -f apps/api/pom.xml spotless:check` passou.
+- Verificações pós-endurecimento: `mvn -B -f apps/api/pom.xml verify` passou com 10 testes unitários (Surefire) e suite IT corretamente pulada (`Tests are skipped`) por default; `mvn -B -f apps/api/pom.xml spotless:check` passou.
+- Refatoração estrutural da API: controllers públicos/admin divididos por recurso; `ApiDtos` quebrado em DTOs individuais; services reorganizados por domínio com interfaces `I*`; portas de e-mail/storage movidas para `contact.email` e `media.storage`; exceções transversais movidas para `shared.exception`; testes ajustados para os novos pacotes; ADR-015 criada para registrar a convenção.
+- Verificações pós-refatoração estrutural: `mvn -B -f apps/api/pom.xml test` passou com 12 testes unitários; `mvn -B -f apps/api/pom.xml verify` passou com 12 testes unitários e ITs pulados por padrão; `mvn -B -f apps/api/pom.xml spotless:check` passou; `docker compose ps` confirmou Docker Desktop/daemon indisponível.
+- Documentação Swagger pós-refatoração: controllers reorganizados receberam `@Tag` e `@Operation` para manter agrupamento e descrições explícitas no OpenAPI; `mvn -B -f apps/api/pom.xml test` e `mvn -B -f apps/api/pom.xml spotless:check` passaram com 12 testes unitários.
+- Tratamento global de erros: `GlobalExceptionHandler` criado com `ProblemDetail`, extensões `code`/`errors`, suporte a validação de request body, JSON malformado, método HTTP não suportado, media type não suportado, `ResponseStatusException`, `ConstraintViolationException` e erro inesperado com log server-side; OpenAPI passou a registrar schemas `ProblemDetail` e `FieldErrorDetail`; ADR-016 criada para registrar o padrão de erro da API.
+- Verificações pós-Problem Details: `mvn -B -f apps/api/pom.xml test` passou com 17 testes unitários; `mvn -B -f apps/api/pom.xml verify` passou com 17 testes unitários e ITs pulados por padrão; `mvn -B -f apps/api/pom.xml spotless:check` passou.
+- Validação Docker pós-Problem Details: corrigida compatibilidade de runtime com Spring Boot 4/Jackson 3 (`tools.jackson.databind.ObjectMapper`) e bind de CORS por `Binder`; `docker compose build api` passou; `docker compose up -d --force-recreate api web` subiu `api`, `web`, `postgres` e `minio`; `/actuator/health` retornou `UP`; `/api/public/profile` retornou `200`; `/v3/api-docs` retornou 20 paths, incluindo controllers públicos e admin, corrigindo o sintoma de Swagger vazio.
+- Pendências: com Docker disponível, rodar `mvn -B -f apps/api/pom.xml verify -DskipITs=false` para exercitar a suite IT (≈12 métodos) contra PostgreSQL real via Testcontainers; validar fluxo MinIO manualmente.
+- Bloqueios: nenhum bloqueio ativo para validação básica de Docker Compose/API.
+- Última atualização: 2026-05-10
+
 ### Consolidação do PRD V3 como fonte de verdade
 
 - Status: Concluído

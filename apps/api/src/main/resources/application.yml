@@ -29,3 +29,29 @@ management:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+app:
+  cors:
+    public-origins:
+      - http://localhost:3000
+      - https://leonardosr.com.br
+  seed:
+    enabled: ${APP_SEED_ENABLED:true}
+  site:
+    url: ${SITE_URL:http://localhost:3000}
+    media-cdn-base-url: ${MEDIA_CDN_BASE_URL:http://localhost:9000/leonardosr-media}
+  admin:
+    initial-email: ${ADMIN_INITIAL_EMAIL:admin@example.test}
+    initial-password-hash: ${ADMIN_INITIAL_PASSWORD_HASH:{noop}change-me-only-local}
+  storage:
+    provider: ${STORAGE_PROVIDER:noop}
+    bucket: ${STORAGE_BUCKET:leonardosr-media}
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ROOT_USER:minioadmin}
+    secret-key: ${MINIO_ROOT_PASSWORD:minioadmin}
+    region: ${STORAGE_REGION:us-east-1}
+  email:
+    provider: ${EMAIL_PROVIDER:noop}
+    from: ${EMAIL_FROM:contato@leonardosr.com.br}
+    admin-to: ${EMAIL_ADMIN_TO:contato@leonardosr.com.br}
+    resend-api-key: ${RESEND_API_KEY:}
