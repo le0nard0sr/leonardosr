@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prebuild": "npm run generate:api",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "generate:api": "node scripts/generate-api.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -28,6 +30,7 @@
     "@types/react-dom": "latest",
     "eslint": "latest",
     "eslint-config-next": "latest",
+    "openapi-typescript": "latest",
     "storybook": "10.3.6",
     "tailwindcss": "latest",
     "typescript": "latest"

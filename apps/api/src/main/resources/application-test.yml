@@ -1,10 +1,32 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:leonardosr-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
   flyway:
-    enabled: false
+    enabled: true
+    locations: classpath:db/migration
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
+    open-in-view: false
+
+app:
+  seed:
+    enabled: false
+  cors:
+    public-origins:
+      - http://localhost:3000
+  site:
+    url: http://localhost:3000
+    media-cdn-base-url: http://localhost:9000/leonardosr-media
+  admin:
+    initial-email: admin@example.test
+    initial-password-hash: "{noop}change-me-only-local"
+  storage:
+    provider: noop
+    bucket: leonardosr-media
+    endpoint: http://localhost:9000
+    access-key: test
+    secret-key: test
+    region: us-east-1
+  email:
+    provider: noop
+    from: contato@leonardosr.com.br
+    admin-to: contato@leonardosr.com.br

@@ -6,6 +6,7 @@ node_modules/
 out/
 storybook-static/
 apps/web/storybook-static/
+apps/web/src/lib/api/schema.ts
 coverage/
 
 target/

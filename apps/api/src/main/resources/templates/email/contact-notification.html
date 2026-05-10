@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="pt-BR">
+<body>
+<h1>Nova mensagem de contato</h1>
+<p><strong>Nome:</strong> <span th:text="${fromName}">Leonardo</span></p>
+<p><strong>Origem:</strong> <span th:text="${fromEmail}">contato@example.test</span></p>
+<p><strong>Assunto:</strong> <span th:text="${subject}">Assunto</span></p>
+<p th:text="${message}">Mensagem</p>
+</body>
+</html>
