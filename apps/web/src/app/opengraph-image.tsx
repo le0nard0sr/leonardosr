@@ -3,6 +3,7 @@ import { safeFetch } from "@/lib/api/errors";
 import { getProfile } from "@/lib/api/public";
 import type { Profile } from "@/lib/api/types";
 
+export const dynamic = "force-dynamic";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "Leonardo Silva Ribeiro — React, Next.js e Spring Boot";

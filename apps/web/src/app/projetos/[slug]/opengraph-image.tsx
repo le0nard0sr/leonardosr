@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { ApiError } from "@/lib/api/client";
 import { getProjectBySlug } from "@/lib/api/public";
 
+export const dynamic = "force-dynamic";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
