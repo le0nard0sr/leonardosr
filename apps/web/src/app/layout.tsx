@@ -4,6 +4,8 @@ import { Header } from "@/components/layout/header";
 import { fontVariables } from "./fonts";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://leonardosr.com.br"),
   title: {
