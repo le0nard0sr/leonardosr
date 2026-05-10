@@ -35,7 +35,7 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ### Implementação inicial do M2
 
-- Status: Em andamento
+- Status: Concluído
 - Evidência/verificação: branch `m2/modelo-dados-api-publica` criada; migration Flyway `V1__m2_initial_domain.sql`; entidades JPA, repositories, services, endpoints públicos e endpoints admin mínimos adicionados; validação parcial de MDX (`preview-validate`), storage/e-mail por portas, seeds idempotentes, geração OpenAPI/TypeScript resiliente, ADR-004, ADR-007, ADR-009 e ADR-011 criados.
 - Verificações executadas: `mvn -f apps/api test` passou com 5 testes; `mvn -f apps/api spotless:check` passou; `npm run web:typecheck` passou; `npm run web:lint` passou; `npm run web:build` passou fora do sandbox após falha `EPERM` no build do Next.js; `npm --workspace @leonardosr/web run generate:api` passou com aviso esperado de API local indisponível.
 - Revisão pós-implementação: corrigido `NoopStorageService.head` para não quebrar `confirm` em dev; pipeline de e-mail passou a renderizar template Thymeleaf também no noop; adapter Resend por HTTP adicionado; ADR-007 explicitou uso do adapter S3-compatible para R2; reorder rejeita duplicatas; validação MDX trata URL malformada; `published_at` também é protegido em update; seeds ampliados para ~15 tags.
@@ -50,8 +50,11 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 - Tratamento global de erros: `GlobalExceptionHandler` criado com `ProblemDetail`, extensões `code`/`errors`, suporte a validação de request body, JSON malformado, método HTTP não suportado, media type não suportado, `ResponseStatusException`, `ConstraintViolationException` e erro inesperado com log server-side; OpenAPI passou a registrar schemas `ProblemDetail` e `FieldErrorDetail`; ADR-016 criada para registrar o padrão de erro da API.
 - Verificações pós-Problem Details: `mvn -B -f apps/api/pom.xml test` passou com 17 testes unitários; `mvn -B -f apps/api/pom.xml verify` passou com 17 testes unitários e ITs pulados por padrão; `mvn -B -f apps/api/pom.xml spotless:check` passou.
 - Validação Docker pós-Problem Details: corrigida compatibilidade de runtime com Spring Boot 4/Jackson 3 (`tools.jackson.databind.ObjectMapper`) e bind de CORS por `Binder`; `docker compose build api` passou; `docker compose up -d --force-recreate api web` subiu `api`, `web`, `postgres` e `minio`; `/actuator/health` retornou `UP`; `/api/public/profile` retornou `200`; `/v3/api-docs` retornou 20 paths, incluindo controllers públicos e admin, corrigindo o sintoma de Swagger vazio.
-- Pendências: com Docker disponível, rodar `mvn -B -f apps/api/pom.xml verify -DskipITs=false` para exercitar a suite IT (≈12 métodos) contra PostgreSQL real via Testcontainers; validar fluxo MinIO manualmente.
-- Bloqueios: nenhum bloqueio ativo para validação básica de Docker Compose/API.
+- Gate final do M2: `AbstractIntegrationTest` passou a suportar `IT_DATABASE_PROVIDER=testcontainers|compose`, mantendo Testcontainers como padrão e usando PostgreSQL do Docker Compose como fallback local Windows/Docker Desktop; `POSTGRES_HOST_PORT` permite evitar conflito com PostgreSQL nativo na porta 5432; MinIO local passou a garantir criação do bucket no startup.
+- Verificações do gate final do M2: `docker compose ps` confirmou `api`, `web`, `postgres` e `minio` em execução, com Postgres healthy em `0.0.0.0:15432->5432`; `$env:IT_DATABASE_PROVIDER='compose'; $env:POSTGRES_HOST_PORT='15432'; mvn -B -f apps/api/pom.xml verify -DskipITs=false` passou com 17 testes unitários e 15 ITs; `mvn -B -f apps/api/pom.xml verify` passou mantendo ITs pulados por padrão; `mvn -B -f apps/api/pom.xml spotless:check` passou; `docker compose build api` passou; `$env:POSTGRES_HOST_PORT='15432'; docker compose up -d --force-recreate api web` subiu os serviços; `/actuator/health` retornou `UP`.
+- Validação manual MinIO: `POST /api/admin/media-assets/upload-url` gerou URL pré-assinada para `m2-minio-check.pdf`; `PUT` no MinIO retornou `200`; `POST /api/admin/media-assets/11/confirm` retornou `status: ACTIVE` e `publicUrl` local.
+- Pendências: nenhuma para o gate final do M2.
+- Bloqueios: nenhum bloqueio ativo.
 - Última atualização: 2026-05-10
 
 ### Consolidação do PRD V3 como fonte de verdade

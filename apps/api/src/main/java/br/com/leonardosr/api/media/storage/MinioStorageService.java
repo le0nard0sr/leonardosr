@@ -1,10 +1,13 @@
 package br.com.leonardosr.api.media.storage;
 
+import io.minio.BucketExistsArgs;
 import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
 import io.minio.StatObjectArgs;
 import io.minio.http.Method;
+import jakarta.annotation.PostConstruct;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +30,18 @@ public class MinioStorageService implements StorageService {
                 .credentials(accessKey, secretKey)
                 .build();
         this.bucket = bucket;
+    }
+
+    @PostConstruct
+    void ensureBucketExists() {
+        try {
+            var exists = client.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
+            if (!exists) {
+                client.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
+            }
+        } catch (Exception exception) {
+            throw new IllegalStateException("Falha ao preparar bucket do storage", exception);
+        }
     }
 
     @Override

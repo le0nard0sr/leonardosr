@@ -11,7 +11,7 @@ public interface SeriesContentRepository extends JpaRepository<SeriesContent, Se
     @Query("select sc from SeriesContent sc where sc.series.id = :seriesId order by sc.sortOrder asc")
     List<SeriesContent> findBySeriesIdOrderBySortOrderAsc(Long seriesId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete from SeriesContent sc where sc.series.id = :seriesId")
     void deleteBySeriesId(Long seriesId);
 }
