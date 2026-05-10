@@ -57,6 +57,67 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 - Bloqueios: nenhum bloqueio ativo.
 - Última atualização: 2026-05-10
 
+## Marco 3 — Páginas públicas principais
+
+### M3-B1 — Backend e contrato
+
+| ID  | Status    | Critério de conclusão                                              | Evidência/verificação                                                                                     | Pendências | Última atualização |
+| --- | --------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- | ---------- | ------------------ |
+| —   | Concluído | `ProfileDto` expõe `curriculumUrl` derivado de `MediaAsset.ACTIVE` | Campo adicionado em `ProfileDto.java`; `ProfileDtoTest` cobre null e ACTIVE                               | Nenhuma    | 2026-05-10         |
+| —   | Concluído | Honeypot `website` descarta spam silenciosamente                   | `ContactRequest.java` com campo opcional; `ContactService` descarta quando preenchido                     | Nenhuma    | 2026-05-10         |
+| —   | Concluído | IP anonimizado persistido em `contact_message.ip_anonymized`       | `IpAnonymizer` em `shared/util`; `ContactService` chama `anonymize()`; `ContactMessage` com setter/getter | Nenhuma    | 2026-05-10         |
+| —   | Concluído | Testes backend passando                                            | `mvn -B -f apps/api/pom.xml test` → 22 testes unitários; `spotless:check` → BUILD SUCCESS                 | Nenhuma    | 2026-05-10         |
+
+### M3-B2 — Infra frontend
+
+| ID  | Status    | Critério de conclusão                     | Evidência/verificação                                                                                              | Pendências                                | Última atualização |
+| --- | --------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- | ------------------ |
+| —   | Concluído | Camada SSR com tipos, loaders e safeFetch | `lib/api/types.ts`, `lib/api/public.ts` (server-only), `lib/api/errors.ts` criados                                 | Nenhuma                                   | 2026-05-10         |
+| —   | Concluído | MDX local configurado                     | `next.config.ts` com `createMDX`; `mdx-components.tsx`; peers `@mdx-js/loader` e `@mdx-js/react` instalados        | Nenhuma                                   | 2026-05-10         |
+| —   | Concluído | Componentes DS criados                    | `PageHeader`, `Stat`, `ProjectCard`, `TimelineRow`, `TechCell`, `FilterBar`, `Prose`, `ProseLayout`, `ContactForm` | Stories para DS reutilizáveis (follow-up) | 2026-05-10         |
+| —   | Concluído | Header e footer atualizados               | `header.tsx` com nav completa; `footer.tsx` Server Component com aliases de e-mail                                 | Nenhuma                                   | 2026-05-10         |
+
+### M3-B3 — Rotas institucionais
+
+| ID   | Status    | Critério de conclusão           | Evidência/verificação                                                                                   | Pendências                                     | Última atualização |
+| ---- | --------- | ------------------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------ |
+| T012 | Concluído | Home implementada               | `app/page.tsx` com hero, projetos featured, experiência teaser, CTA final; SSR com `safeFetch`          | Nenhuma                                        | 2026-05-10         |
+| T013 | Concluído | Sobre implementada              | `app/sobre/page.tsx` com bio, links sociais, side panel                                                 | Nenhuma                                        | 2026-05-10         |
+| T014 | Concluído | Experiência implementada        | `app/experiencia/page.tsx` com `TimelineRow` por experiência ordenada                                   | Nenhuma                                        | 2026-05-10         |
+| T015 | Concluído | Stack implementada              | `app/stack/page.tsx` + `stack-content.tsx` (client) com `FilterBar` por categoria e `TechCell`          | Nenhuma                                        | 2026-05-10         |
+| —    | Concluído | Currículo implementado          | `app/curriculo/page.tsx` com paper layout, `curriculumUrl` condicional, experiências e stack            | PDF real para ser adicionado quando disponível | 2026-05-10         |
+| T053 | Concluído | Privacidade e Termos publicadas | MDX em `src/content/legal/`; rotas `app/privacidade/page.tsx` e `app/termos/page.tsx` via `ProseLayout` | Nenhuma                                        | 2026-05-10         |
+
+### M3-B4 — Projetos e Contato
+
+| ID   | Status    | Critério de conclusão          | Evidência/verificação                                                                                                                                                                | Pendências | Última atualização |
+| ---- | --------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ------------------ |
+| T016 | Concluído | Listagem e detalhe de projetos | `app/projetos/page.tsx` com `ProjectsList` (filtro client por tecnologia); `app/projetos/[slug]/page.tsx` com `generateMetadata`, `generateStaticParams`, `notFound()` e `error.tsx` | Nenhuma    | 2026-05-10         |
+| T017 | Concluído | Contato implementado           | `app/contato/page.tsx` + `actions.ts` (Server Action com honeypot, validação e `submitContact`); side panel com aliases e disclosure LGPD                                            | Nenhuma    | 2026-05-10         |
+
+### M3-B5 — Metadata, OG e fechamento
+
+| ID   | Status    | Critério de conclusão                     | Evidência/verificação                                                                                               | Pendências                                    | Última atualização |
+| ---- | --------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------ |
+| —    | Concluído | Catch-all substituído por rotas dedicadas | `app/[[...slug]]/page.tsx` removido; 11 rotas dedicadas criadas                                                     | Nenhuma                                       | 2026-05-10         |
+| T054 | Concluído | OG image dinâmica                         | `app/opengraph-image.tsx` (global) e `app/projetos/[slug]/opengraph-image.tsx` (dinâmica por projeto) via `next/og` | Demais rotas com OG específica (follow-up M5) | 2026-05-10         |
+| —    | Concluído | ADR-006 criada                            | `docs/adr/006-metadata-og-fetch-ssr.md` registrando metadata, OG, cache SSR, safeFetch e o que fica para M5         | Nenhuma                                       | 2026-05-10         |
+
+### Gate final do M3
+
+- **Status:** Em andamento — aguardando validação manual e PR draft.
+- **Verificações executadas:**
+  - `mvn -B -f apps/api/pom.xml test` → 22 testes unitários; BUILD SUCCESS.
+  - `mvn -B -f apps/api/pom.xml spotless:check` → BUILD SUCCESS.
+  - `npm run web:lint` → sem erros.
+  - `npm run web:typecheck` → sem erros.
+  - `npm run web:build` → BUILD SUCCESS; 11 rotas geradas (/, /sobre, /experiencia, /stack, /curriculo, /contato, /projetos, /projetos/[slug], /privacidade, /termos, /opengraph-image).
+- **Pendências:** validação manual das rotas em browser; smoke do formulário de contato; verificação do OG image; PR draft.
+- **Bloqueios:** nenhum.
+- **Última atualização:** 2026-05-10
+
+---
+
 ### Consolidação do PRD V3 como fonte de verdade
 
 - Status: Concluído
