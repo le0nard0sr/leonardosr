@@ -87,6 +87,7 @@ public class SiteProfile {
     public void setContactEmailAlias(String contactEmailAlias) { this.contactEmailAlias = contactEmailAlias; }
     public String getPrivacyEmailAlias() { return privacyEmailAlias; }
     public void setPrivacyEmailAlias(String privacyEmailAlias) { this.privacyEmailAlias = privacyEmailAlias; }
+    public MediaAsset getCurriculumMedia() { return curriculumMedia; }
     public String getImageUrlAllowlist() { return imageUrlAllowlist; }
     public void setImageUrlAllowlist(String imageUrlAllowlist) { this.imageUrlAllowlist = imageUrlAllowlist; }
 }

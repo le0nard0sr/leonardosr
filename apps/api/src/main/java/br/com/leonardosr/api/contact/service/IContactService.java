@@ -4,5 +4,5 @@ import br.com.leonardosr.api.contact.dto.ContactRequest;
 import br.com.leonardosr.api.domain.ContactMessage;
 
 public interface IContactService {
-    ContactMessage create(ContactRequest request);
+    ContactMessage create(ContactRequest request, String remoteIp);
 }

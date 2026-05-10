@@ -1,5 +1,7 @@
 package br.com.leonardosr.api.profile.dto;
 
+import br.com.leonardosr.api.domain.MediaAsset;
+import br.com.leonardosr.api.domain.MediaAssetStatus;
 import br.com.leonardosr.api.domain.SiteProfile;
 
 public record ProfileDto(
@@ -16,6 +18,7 @@ public record ProfileDto(
         String youtubeUrl,
         String contactEmailAlias,
         String privacyEmailAlias,
+        String curriculumUrl,
         String imageUrlAllowlist) {
     public static ProfileDto from(SiteProfile profile) {
         return new ProfileDto(
@@ -32,6 +35,14 @@ public record ProfileDto(
                 profile.getYoutubeUrl(),
                 profile.getContactEmailAlias(),
                 profile.getPrivacyEmailAlias(),
+                curriculumUrl(profile.getCurriculumMedia()),
                 profile.getImageUrlAllowlist());
+    }
+
+    private static String curriculumUrl(MediaAsset curriculumMedia) {
+        if (curriculumMedia == null || curriculumMedia.getStatus() != MediaAssetStatus.ACTIVE) {
+            return null;
+        }
+        return curriculumMedia.getPublicUrl();
     }
 }

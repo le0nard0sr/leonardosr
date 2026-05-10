@@ -51,4 +51,6 @@ public class ContactMessage {
     public void setSubject(String subject) { this.subject = subject; }
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
+    public String getIpAnonymized() { return ipAnonymized; }
+    public void setIpAnonymized(String ipAnonymized) { this.ipAnonymized = ipAnonymized; }
 }
