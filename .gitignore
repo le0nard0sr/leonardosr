@@ -5,6 +5,7 @@ node_modules/
 .next/
 out/
 storybook-static/
+apps/web/storybook-static/
 coverage/
 
 target/
