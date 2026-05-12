@@ -2,11 +2,21 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { ReadingProgress } from "@/components/ui/reading-progress";
+import { JsonLd } from "@/components/seo/json-ld";
 import { ApiError } from "@/lib/api/client";
-import { getContents, getContentBySlug } from "@/lib/api/public";
+import {
+  getContents,
+  getContentBySlug,
+  getProfile,
+  getSeoSettings,
+} from "@/lib/api/public";
+import { safeFetch } from "@/lib/api/errors";
 import { getMdxComponents } from "@/mdx-components";
+import { buildBreadcrumbsFor } from "@/lib/seo/breadcrumbs";
+import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/seo/json-ld";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -90,6 +100,11 @@ export default async function ArquiteturaDetalhePage({ params }: PageProps) {
 
   if (content.type !== "ARCHITECTURE") notFound();
 
+  const [seo, profile] = await Promise.all([
+    safeFetch(getSeoSettings, null, "arquitetura.seo"),
+    safeFetch(getProfile, null, "arquitetura.profile"),
+  ]);
+
   const arch = parseArchFields(content.typeSpecificFields);
 
   const publishedAt = content.publishedAt
@@ -100,27 +115,31 @@ export default async function ArquiteturaDetalhePage({ params }: PageProps) {
       }).format(new Date(content.publishedAt))
     : null;
 
+  const bcItems = buildBreadcrumbsFor(
+    "arquiteturas",
+    slug,
+    content.title,
+    seo?.siteUrl,
+  );
+
   return (
     <>
+      {seo && profile && (
+        <JsonLd data={buildArticleSchema(content, profile, seo)} />
+      )}
+      <JsonLd data={buildBreadcrumbSchema(bcItems)} />
       <ReadingProgress />
 
       {/* BREADCRUMB */}
       <div className="border-b border-[color:var(--border)]">
         <Container className="py-3">
-          <nav
-            aria-label="Breadcrumb"
-            className="flex items-center gap-2 font-mono text-xs text-[color:var(--fg-faint)]"
-          >
-            <Link href="/" className="hover:text-[color:var(--fg)]">
-              início
-            </Link>
-            <span>/</span>
-            <Link href="/arquiteturas" className="hover:text-[color:var(--fg)]">
-              arquiteturas
-            </Link>
-            <span>/</span>
-            <span className="text-[color:var(--fg-muted)]">{slug}</span>
-          </nav>
+          <Breadcrumbs
+            items={[
+              { label: "início", href: "/" },
+              { label: "arquiteturas", href: "/arquiteturas" },
+              { label: slug },
+            ]}
+          />
         </Container>
       </div>
 

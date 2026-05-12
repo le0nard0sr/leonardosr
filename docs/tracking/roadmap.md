@@ -254,12 +254,12 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ### M5-B3 — JSON-LD, Twitter Cards, Breadcrumbs, meta-verificação, 404
 
-| ID    | Status  | Critério                                                              | Evidência | Pendências | Última atualização |
-| ----- | ------- | --------------------------------------------------------------------- | --------- | ---------- | ------------------ |
-| T025  | Backlog | JSON-LD Person/Article/Video/Breadcrumb passa em validator.schema.org | —         | —          | —                  |
-| T026  | Backlog | Twitter Cards em todas as páginas + meta-verificação Google/Bing      | —         | —          | —                  |
-| T057a | Backlog | Breadcrumbs componente reutilizável + JSON-LD BreadcrumbList          | —         | —          | —                  |
-| —     | Backlog | 404 otimizada com `robots: noindex` e CTAs                            | —         | —          | —                  |
+| ID    | Status    | Critério                                                              | Evidência                                                                                      | Pendências                                 | Última atualização |
+| ----- | --------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------ |
+| T025  | Concluído | JSON-LD Person/Article/Video/Breadcrumb passa em validator.schema.org | lib/seo/json-ld.ts com Person/WebSite/Article/Video/BreadcrumbList; build OK                   | Validar em validator.schema.org pós-deploy | 2026-05-12         |
+| T026  | Concluído | Twitter Cards em todas as páginas + meta-verificação Google/Bing      | buildBaseMetadata: twitter.card=summary_large_image; verification.google/other msvalidate.01   | —                                          | 2026-05-12         |
+| T057a | Concluído | Breadcrumbs componente reutilizável + JSON-LD BreadcrumbList          | components/ui/breadcrumbs.tsx + story; BreadcrumbList em 6 rotas de detalhe; visual em 6 rotas | —                                          | 2026-05-12         |
+| —     | Concluído | 404 otimizada com `robots: noindex` e CTAs                            | not-found.tsx com metadata robots noindex + 4 CTAs                                             | —                                          | 2026-05-12         |
 
 ---
 

@@ -2,20 +2,30 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { ContentCard } from "@/components/ui/content-card";
 import { SeriesNav } from "@/components/ui/series-nav";
 import { Toc } from "@/components/ui/toc";
 import { ReadingProgress } from "@/components/ui/reading-progress";
+import { JsonLd } from "@/components/seo/json-ld";
 import { ApiError } from "@/lib/api/client";
 import {
   getContentBySlug,
   getContents,
+  getProfile,
+  getSeoSettings,
   getSeriesBySlug,
 } from "@/lib/api/public";
 import { safeFetch } from "@/lib/api/errors";
 import { extractToc } from "@/lib/toc";
 import { getMdxComponents } from "@/mdx-components";
+import { buildBreadcrumbsFor } from "@/lib/seo/breadcrumbs";
+import {
+  buildArticleSchema,
+  buildBreadcrumbSchema,
+  buildVideoSchema,
+} from "@/lib/seo/json-ld";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -85,6 +95,11 @@ export default async function ConteudoDetalhePage({
     throw error;
   }
 
+  const [seo, profile] = await Promise.all([
+    safeFetch(getSeoSettings, null, "conteudo.seo"),
+    safeFetch(getProfile, null, "conteudo.profile"),
+  ]);
+
   const toc = extractToc(content.body);
   const showToc = toc.length > 0 && (content.readingTime ?? 0) > 5;
 
@@ -133,27 +148,36 @@ export default async function ConteudoDetalhePage({
         ).then((all) => all.filter((c) => c.slug !== slug).slice(0, 3))
       : [];
 
+  const bcItems = buildBreadcrumbsFor(
+    "conteudos",
+    slug,
+    content.title,
+    seo?.siteUrl,
+  );
+  const videoSchema =
+    seo && (content.youtubeVideoId || content.youtubeUrl)
+      ? buildVideoSchema(content, seo)
+      : null;
+
   return (
     <>
+      {seo && profile && (
+        <JsonLd data={buildArticleSchema(content, profile, seo)} />
+      )}
+      {videoSchema && <JsonLd data={videoSchema} />}
+      <JsonLd data={buildBreadcrumbSchema(bcItems)} />
       <ReadingProgress />
 
       {/* BREADCRUMB */}
       <div className="border-b border-[color:var(--border)]">
         <Container className="py-3">
-          <nav
-            aria-label="Breadcrumb"
-            className="flex items-center gap-2 font-mono text-xs text-[color:var(--fg-faint)]"
-          >
-            <Link href="/" className="hover:text-[color:var(--fg)]">
-              início
-            </Link>
-            <span>/</span>
-            <Link href="/conteudos" className="hover:text-[color:var(--fg)]">
-              conteúdos
-            </Link>
-            <span>/</span>
-            <span className="text-[color:var(--fg-muted)]">{slug}</span>
-          </nav>
+          <Breadcrumbs
+            items={[
+              { label: "início", href: "/" },
+              { label: "conteúdos", href: "/conteudos" },
+              { label: slug },
+            ]}
+          />
         </Container>
       </div>
 

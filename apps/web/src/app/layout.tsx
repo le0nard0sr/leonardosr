@@ -1,33 +1,51 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { JsonLd } from "@/components/seo/json-ld";
+import { safeFetch } from "@/lib/api/errors";
+import { getProfile, getSeoSettings } from "@/lib/api/public";
+import { buildBaseMetadata } from "@/lib/seo/build-metadata";
+import { buildPersonSchema, buildWebSiteSchema } from "@/lib/seo/json-ld";
 import { fontVariables } from "./fonts";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://leonardosr.com.br"),
-  title: {
-    default: "Leonardo Silva Ribeiro | React, Next.js e Spring Boot",
-    template: "%s | Leonardo Silva Ribeiro",
-  },
-  description:
+const FALLBACK_SEO = {
+  defaultTitle: "Leonardo Silva Ribeiro | React, Next.js e Spring Boot",
+  defaultDescription:
     "Site pessoal, portfólio profissional e hub de conteúdos técnicos sobre React, Next.js, Java e Spring Boot.",
-  applicationName: "leonardosr.com.br",
-  openGraph: {
-    type: "website",
-    locale: "pt_BR",
-    url: "https://leonardosr.com.br",
-    siteName: "Leonardo Silva Ribeiro",
-    title: "Leonardo Silva Ribeiro | React, Next.js e Spring Boot",
-    description:
-      "Portfólio profissional e hub de conteúdos técnicos sobre arquitetura web moderna.",
-    images: [{ url: "/og/fallback.png", width: 1200, height: 630 }],
-  },
+  defaultLocale: "pt_BR",
+  defaultAuthorName: "Leonardo Silva Ribeiro",
+  defaultOgImageUrl: null,
+  siteUrl: "https://leonardosr.com.br",
+  mediaCdnBaseUrl: "",
+  twitterHandle: null,
+  robotsPolicy: "disallow_admin",
+  googleVerification: null,
+  bingVerification: null,
 };
 
-export default function RootLayout({
+const FALLBACK_PROFILE = {
+  id: 0,
+  displayName: "Leonardo Silva Ribeiro",
+  professionalTitle: "React, Next.js e Spring Boot",
+  headline: "Arquitetura e desenvolvimento web moderno.",
+  shortBio: "Portfólio profissional e hub de conteúdo técnico.",
+  fullBio: "Perfil em carregamento.",
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await safeFetch(getSeoSettings, FALLBACK_SEO, "layout.seo");
+  return buildBaseMetadata(seo);
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const [seo, profile] = await Promise.all([
+    safeFetch(getSeoSettings, FALLBACK_SEO, "layout.seo"),
+    safeFetch(getProfile, FALLBACK_PROFILE, "layout.profile"),
+  ]);
+
   return (
     <html lang="pt-BR" suppressHydrationWarning style={fontVariables.style}>
       <head>
@@ -38,6 +56,8 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <JsonLd data={buildPersonSchema(profile, seo)} />
+        <JsonLd data={buildWebSiteSchema(seo)} />
         <div className="page-shell">
           <Header />
           <main className="main-content">{children}</main>

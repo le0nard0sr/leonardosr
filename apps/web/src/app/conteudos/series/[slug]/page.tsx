@@ -1,11 +1,16 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { PageHeader } from "@/components/ui/page-header";
 import { ContentCard } from "@/components/ui/content-card";
+import { JsonLd } from "@/components/seo/json-ld";
 import { ApiError } from "@/lib/api/client";
-import { getSeries, getSeriesBySlug } from "@/lib/api/public";
+import { getSeries, getSeriesBySlug, getSeoSettings } from "@/lib/api/public";
+import { safeFetch } from "@/lib/api/errors";
+import { buildBreadcrumbsFor } from "@/lib/seo/breadcrumbs";
+import { buildBreadcrumbSchema } from "@/lib/seo/json-ld";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -59,13 +64,37 @@ export default async function SeriesDetalhePage({ params }: PageProps) {
     throw error;
   }
 
+  const seo = await safeFetch(getSeoSettings, null, "series.seo");
+
   const items = [...series.contents].sort((a, b) => a.sortOrder - b.sortOrder);
 
   const published = items.filter((i) => i.content.publishedAt).length;
   const total = items.length;
 
+  const bcItems = buildBreadcrumbsFor(
+    "series",
+    slug,
+    series.title,
+    seo?.siteUrl,
+  );
+
   return (
     <>
+      <JsonLd data={buildBreadcrumbSchema(bcItems)} />
+
+      <div className="border-b border-[color:var(--border)]">
+        <Container className="py-3">
+          <Breadcrumbs
+            items={[
+              { label: "início", href: "/" },
+              { label: "conteúdos", href: "/conteudos" },
+              { label: "séries", href: "/conteudos/series" },
+              { label: slug },
+            ]}
+          />
+        </Container>
+      </div>
+
       <PageHeader
         eyebrow="Série"
         title={series.title}
