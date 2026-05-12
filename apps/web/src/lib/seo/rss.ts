@@ -26,7 +26,13 @@ export function buildRssFeed(contents: Content[], seo: SeoSettings): string {
   const items = contents
     .filter((c) => c.publishedAt && new Date(c.publishedAt) <= new Date())
     .map((c) => {
-      const link = encodeXml(`${siteUrl}/conteudos/${c.slug}`);
+      const contentPath =
+        c.type === "LAB"
+          ? "/laboratorio"
+          : c.type === "ARCHITECTURE"
+            ? "/arquiteturas"
+            : "/conteudos";
+      const link = encodeXml(`${siteUrl}${contentPath}/${c.slug}`);
       const itemTitle = encodeXml(c.title);
       const summary = encodeXml(c.summary ?? "");
       const pubDate = toRfc822(c.publishedAt!);

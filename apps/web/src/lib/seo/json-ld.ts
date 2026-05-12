@@ -55,6 +55,12 @@ export function buildProjectSchema(
   };
 }
 
+function getContentUrlPath(type: Content["type"]): string {
+  if (type === "LAB") return "/laboratorio";
+  if (type === "ARCHITECTURE") return "/arquiteturas";
+  return "/conteudos";
+}
+
 export function buildArticleSchema(
   content: Content,
   profile: Profile,
@@ -66,7 +72,7 @@ export function buildArticleSchema(
     "@type": "Article",
     headline: content.title,
     description: content.summary,
-    url: `${siteUrl}/conteudos/${content.slug}`,
+    url: `${siteUrl}${getContentUrlPath(content.type)}/${content.slug}`,
     ...(content.publishedAt ? { datePublished: content.publishedAt } : {}),
     author: {
       "@type": "Person",

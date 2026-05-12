@@ -275,12 +275,12 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ### M5-B5 — Lighthouse CI + Playwright E2E + ADRs + gate final + PR draft
 
-| ID   | Status    | Critério                                                            | Evidência                                                                                                | Pendências                                     | Última atualização |
-| ---- | --------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------ |
-| T058 | Concluído | `.lighthouserc.json` + workflow rodam Lighthouse CI com budgets CWV | `.lighthouserc.json` + `.github/workflows/lighthouse.yml` criados; budgets alinhados ao PRD              | Workflow valida no primeiro PR com stack ativa | 2026-05-12         |
-| —    | Concluído | Playwright E2E cobre sitemap/robots/RSS/JSON-LD/404                 | `tests/e2e/seo-flows.spec.ts` com 5 cenarios                                                             | Executar com stack ativa                       | 2026-05-12         |
-| —    | Concluído | ADR-017 e ADR-018 criados                                           | `docs/adr/017-lighthouse-ci-budgets.md` e `docs/adr/018-seo-tecnico-nextjs.md`                           | —                                              | 2026-05-12         |
-| —    | Concluído | Gate final M5                                                       | typecheck/lint/build/storybook OK; [PR draft #6](https://github.com/le0nard0sr/leonardosr/pull/6) aberto | PR draft aguarda CI                            | 2026-05-12         |
+| ID   | Status       | Critério                                                            | Evidência                                                                                                | Pendências                                     | Última atualização |
+| ---- | ------------ | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------ |
+| T058 | Concluído    | `.lighthouserc.json` + workflow rodam Lighthouse CI com budgets CWV | `.lighthouserc.json` + `.github/workflows/lighthouse.yml` criados; budgets alinhados ao PRD              | Workflow valida no primeiro PR com stack ativa | 2026-05-12         |
+| —    | Em andamento | Playwright E2E cobre sitemap/robots/RSS/JSON-LD/404                 | `tests/e2e/seo-flows.spec.ts` escrito com 5 cenários; execução pendente com stack ativa                  | Executar com stack ativa                       | 2026-05-12         |
+| —    | Concluído    | ADR-017 e ADR-018 criados                                           | `docs/adr/017-lighthouse-ci-budgets.md` e `docs/adr/018-seo-tecnico-nextjs.md`                           | —                                              | 2026-05-12         |
+| —    | Em andamento | Gate final M5                                                       | typecheck/lint/build/storybook OK; [PR draft #6](https://github.com/le0nard0sr/leonardosr/pull/6) aberto | Checks marcados abaixo aguardam stack ativa    | 2026-05-12         |
 
 ### Gate final M5
 
@@ -291,6 +291,7 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 - [ ] `mvn -B -f apps/api/pom.xml verify` — aguarda stack ativa (M5-B1 backend)
 - [ ] `mvn -B -f apps/api/pom.xml spotless:check` — aguarda stack ativa
 - [ ] `npm run test:e2e` (seo-flows.spec.ts) — aguarda stack ativa
+- [ ] `npm --workspace @leonardosr/web run generate:api` — regenera `schema.ts` com `/api/public/settings/seo`; aguarda stack ativa
 - [ ] PR draft aberto contra `main` — pendente
 
 **Follow-ups registrados:**
