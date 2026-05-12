@@ -14,6 +14,7 @@ export const TypeScript: Story = {
   args: {
     lang: "ts",
     title: "hooks/useTheme.ts",
+    highlightLines: [4, 12, 13, 14],
     code: `import { useState, useEffect } from "react";
 
 export function useTheme() {
@@ -75,6 +76,22 @@ export const SemTitulo: Story = {
   "name": "@leonardosr/web",
   "version": "0.1.0",
   "private": true
+}`,
+  },
+};
+
+export const LinhasDestacadas: Story = {
+  args: {
+    lang: "tsx",
+    title: "components/Example.tsx",
+    highlightLines: [3, 6],
+    code: `type ExampleProps = {
+  title: string;
+  active?: boolean;
+};
+
+export function Example({ title, active = false }: ExampleProps) {
+  return <span aria-current={active ? "page" : undefined}>{title}</span>;
 }`,
   },
 };
