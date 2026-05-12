@@ -265,11 +265,11 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ### M5-B4 — Débitos M3: force-dynamic global, safeFetch, OG fallback, stories DS
 
-| ID              | Status  | Critério                                                        | Evidência | Pendências | Última atualização |
-| --------------- | ------- | --------------------------------------------------------------- | --------- | ---------- | ------------------ |
-| —               | Backlog | Build Next sem `force-dynamic` global e tolerante a API offline | —         | —          | —                  |
-| T054 (fallback) | Backlog | `public/og/fallback.png` gerado e referenciado                  | —         | —          | —                  |
-| —               | Backlog | Stories para 6 componentes DS                                   | —         | —          | —                  |
+| ID              | Status    | Critério                                                        | Evidência                                                                                            | Pendências | Última atualização |
+| --------------- | --------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------- | ------------------ |
+| —               | Concluído | Build Next sem `force-dynamic` global e tolerante a API offline | `npm run web:build` passa com API offline; `safeFetch` + `ApiError 503→notFound()` em 6 páginas      | —          | 2026-05-12         |
+| T054 (fallback) | Concluído | `public/og/fallback.png` gerado e referenciado                  | Script `og:fallback` gera PNG 38638 bytes; arquivo commitado; OG layout reference `/og/fallback.png` | —          | 2026-05-12         |
+| —               | Concluído | Stories para 6 componentes DS                                   | `build-storybook` lista page-header, stat, project-card, timeline-row, tech-cell, filter-bar         | —          | 2026-05-12         |
 
 ---
 

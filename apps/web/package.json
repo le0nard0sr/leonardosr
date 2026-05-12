@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "generate:api": "node scripts/generate-api.mjs",
+    "og:fallback": "node scripts/generate-og-fallback.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

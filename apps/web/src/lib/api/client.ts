@@ -23,14 +23,19 @@ export async function apiRequest<T>(
   path: string,
   init: ApiRequestInit = {},
 ): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...init.headers,
-    },
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...init.headers,
+      },
+    });
+  } catch {
+    throw new ApiError(`API indisponível: ${path}`, 503);
+  }
 
   if (!response.ok) {
     throw new ApiError(`Falha ao chamar API: ${path}`, response.status);

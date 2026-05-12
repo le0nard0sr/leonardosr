@@ -48,7 +48,14 @@ export default async function SeriesDetalhePage({ params }: PageProps) {
   try {
     series = await getSeriesBySlug(slug);
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) notFound();
+    if (error instanceof ApiError) {
+      if (error.status === 404) notFound();
+      if (
+        error.status === 503 &&
+        process.env.NEXT_PHASE === "phase-production-build"
+      )
+        notFound();
+    }
     throw error;
   }
 

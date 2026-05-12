@@ -50,7 +50,14 @@ export default async function TagDetalhePage({ params }: PageProps) {
   try {
     tagDetail = await getTagBySlug(slug);
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) notFound();
+    if (error instanceof ApiError) {
+      if (error.status === 404) notFound();
+      if (
+        error.status === 503 &&
+        process.env.NEXT_PHASE === "phase-production-build"
+      )
+        notFound();
+    }
     throw error;
   }
 

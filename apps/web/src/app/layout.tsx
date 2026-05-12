@@ -4,8 +4,6 @@ import { Header } from "@/components/layout/header";
 import { fontVariables } from "./fonts";
 import "./globals.css";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://leonardosr.com.br"),
   title: {
@@ -23,6 +21,7 @@ export const metadata: Metadata = {
     title: "Leonardo Silva Ribeiro | React, Next.js e Spring Boot",
     description:
       "Portfólio profissional e hub de conteúdos técnicos sobre arquitetura web moderna.",
+    images: [{ url: "/og/fallback.png", width: 1200, height: 630 }],
   },
 };
 
