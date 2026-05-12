@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { fontVariables } from "./fonts";
 import "./globals.css";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://leonardosr.com.br"),
@@ -14,9 +15,6 @@ export const metadata: Metadata = {
   description:
     "Site pessoal, portfólio profissional e hub de conteúdos técnicos sobre React, Next.js, Java e Spring Boot.",
   applicationName: "leonardosr.com.br",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     locale: "pt_BR",
@@ -28,15 +26,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const cookieStore = await cookies();
-  const theme =
-    cookieStore.get("lsr-theme")?.value === "light" ? "light" : "dark";
-
   return (
-    <html lang="pt-BR" data-theme={theme} style={fontVariables.style}>
+    <html lang="pt-BR" suppressHydrationWarning style={fontVariables.style}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=document.cookie.match(/lsr-theme=([^;]+)/);document.documentElement.setAttribute('data-theme',t&&t[1]==='light'?'light':'dark');}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body>
         <div className="page-shell">
           <Header />

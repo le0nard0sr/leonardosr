@@ -9,7 +9,7 @@ export default function NotFound() {
       </p>
       <h1 className="mt-4 text-4xl font-semibold">Página não encontrada.</h1>
       <p className="mx-auto mt-4 max-w-xl text-[color:var(--fg-muted)]">
-        A rota solicitada ainda não existe neste marco inicial.
+        A página que você procura não existe ou foi movida.
       </p>
       <div className="mt-8">
         <Button href="/">Voltar para o início</Button>
