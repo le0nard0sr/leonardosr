@@ -227,6 +227,63 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ---
 
+## Marco 5 — SEO técnico avançado (preparação)
+
+**Branch:** `m5/seo-tecnico-avancado`
+**Objetivo:** Implementar SEO técnico completo (sitemap, robots, RSS, JSON-LD, Twitter Cards, breadcrumbs, meta-verificação Google/Bing) e preparar base para ativação pós-deploy do M8. Inclui débitos do M3: remover `force-dynamic` global, gerar fallback OG estático, completar stories de DS.
+
+---
+
+### M5-B1 — Backend público SEO + tipos frontend
+
+| ID  | Status    | Critério                                                                                     | Evidência                                                                                                             | Pendências                                        | Última atualização |
+| --- | --------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------ |
+| —   | Concluído | `GET /api/public/settings/seo` retorna `PublicSeoDto` enxuto + `getSeoSettings()` SSR pronto | `mvn test` → 29 testes unitários (7 novos `PublicSeoDtoTest`); `spotless:check` ✅; `web:typecheck` ✅; `web:lint` ✅ | OpenAPI a regenerar quando API estiver disponível | 2026-05-12         |
+
+---
+
+### M5-B2 — Sitemap, robots, RSS
+
+| ID   | Status  | Critério                                                                                | Evidência | Pendências                          | Última atualização |
+| ---- | ------- | --------------------------------------------------------------------------------------- | --------- | ----------------------------------- | ------------------ |
+| T023 | Backlog | `/sitemap.xml` lista rotas estáticas + dinâmicas com lastModified                       | —         | —                                   | —                  |
+| T024 | Backlog | `/robots.txt` reflete `seo.robotsPolicy` (`allow`/`disallow_admin`) e bloqueia `/admin` | —         | Suporte real a `custom` no M6 admin | —                  |
+| T027 | Backlog | `/rss.xml` retorna feed RSS 2.0 válido                                                  | —         | —                                   | —                  |
+
+---
+
+### M5-B3 — JSON-LD, Twitter Cards, Breadcrumbs, meta-verificação, 404
+
+| ID    | Status  | Critério                                                              | Evidência | Pendências | Última atualização |
+| ----- | ------- | --------------------------------------------------------------------- | --------- | ---------- | ------------------ |
+| T025  | Backlog | JSON-LD Person/Article/Video/Breadcrumb passa em validator.schema.org | —         | —          | —                  |
+| T026  | Backlog | Twitter Cards em todas as páginas + meta-verificação Google/Bing      | —         | —          | —                  |
+| T057a | Backlog | Breadcrumbs componente reutilizável + JSON-LD BreadcrumbList          | —         | —          | —                  |
+| —     | Backlog | 404 otimizada com `robots: noindex` e CTAs                            | —         | —          | —                  |
+
+---
+
+### M5-B4 — Débitos M3: force-dynamic global, safeFetch, OG fallback, stories DS
+
+| ID              | Status  | Critério                                                        | Evidência | Pendências | Última atualização |
+| --------------- | ------- | --------------------------------------------------------------- | --------- | ---------- | ------------------ |
+| —               | Backlog | Build Next sem `force-dynamic` global e tolerante a API offline | —         | —          | —                  |
+| T054 (fallback) | Backlog | `public/og/fallback.png` gerado e referenciado                  | —         | —          | —                  |
+| —               | Backlog | Stories para 6 componentes DS                                   | —         | —          | —                  |
+
+---
+
+### M5-B5 — Lighthouse CI + Playwright E2E + ADRs + gate final + PR draft
+
+| ID   | Status  | Critério                                                            | Evidência | Pendências | Última atualização |
+| ---- | ------- | ------------------------------------------------------------------- | --------- | ---------- | ------------------ |
+| T058 | Backlog | `.lighthouserc.json` + workflow rodam Lighthouse CI com budgets CWV | —         | —          | —                  |
+| —    | Backlog | Playwright E2E cobre sitemap/robots/RSS/JSON-LD/404                 | —         | —          | —                  |
+| —    | Backlog | ADR-017 e ADR-018 criados                                           | —         | —          | —                  |
+| —    | Backlog | Gate final M5                                                       | —         | —          | —                  |
+
+---
+
 ### Consolidação do PRD V3 como fonte de verdade
 
 - Status: Concluído

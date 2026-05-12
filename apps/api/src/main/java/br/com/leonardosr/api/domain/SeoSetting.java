@@ -74,4 +74,6 @@ public class SeoSetting {
     public void setGoogleVerification(String googleVerification) { this.googleVerification = googleVerification; }
     public String getBingVerification() { return bingVerification; }
     public void setBingVerification(String bingVerification) { this.bingVerification = bingVerification; }
+    public MediaAsset getDefaultOgImage() { return defaultOgImage; }
+    public void setDefaultOgImage(MediaAsset defaultOgImage) { this.defaultOgImage = defaultOgImage; }
 }

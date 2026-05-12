@@ -9,6 +9,7 @@ import type {
   Experience,
   Profile,
   Project,
+  SeoSettings,
   Series,
   Tag,
   TagDetail,
@@ -20,6 +21,10 @@ const REVALIDATE_DETAIL = 86400;
 
 const publicGet = <T>(path: string, seconds = REVALIDATE_LIST) =>
   apiRequest<T>(path, { next: { revalidate: seconds } });
+
+export const getSeoSettings = cache(() =>
+  publicGet<SeoSettings>("/api/public/settings/seo"),
+);
 
 export const getProfile = cache(() =>
   publicGet<Profile>("/api/public/profile"),
