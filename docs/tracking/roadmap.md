@@ -212,8 +212,17 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
   - **TOC mobile colapsável**: `toc.tsx` recebe `collapsible?: boolean`; quando `true`, envolve em `<details>/<summary>`; `[slug]/page.tsx` renderiza `<Toc collapsible />` antes do artigo (`lg:hidden`) e TOC sticky na sidebar (`hidden lg:block`).
   - **Destaque de linhas**: `highlightCode()` aceita `highlightLines?: number[]` e marca linhas do HTML Shiki com `line--highlighted`; `CodeBlock` expõe `highlightLines` para MDX (`<CodeBlock highlightLines={[2, 4]} />`); Storybook cobre variante com linhas destacadas.
   - **Smoke Docker Compose M4**: `docker compose build` e `docker compose up -d --force-recreate api web` passaram; `docker compose ps` confirmou `api`, `web`, `postgres` healthy e `minio` em execução; API `/actuator/health`, `/api/public/contents` e `/api/public/series/arquitetura-de-aplicacoes-web` retornou `200`; páginas públicas M4 retornaram `200`; `/laboratorio/react-puro-ou-nextjs` e `/arquiteturas/laboratorio-api-rest-spring` retornaram `404` conforme esperado; OG images principais retornaram `200 image/png`.
+  - **Smoke visual via Playwright CLI**: wrapper vendorizado em `.codex/vendor_imports` validado via Git Bash; `/conteudos` abriu com título correto, snapshot exibiu hub, filtros e cards seedados; clique em `Artigos` atualizou a URL para `/conteudos?type=Artigos`; navegação para `/conteudos/react-puro-ou-nextjs` carregou detalhe MDX e relacionados; screenshot salvo em `output/playwright/m4-conteudo-detalhe.png`; console registrou apenas `404` de `/favicon.ico`.
   - Gate pós-correções: `web:typecheck` ✅ · `web:lint` ✅ · `web:build` ✅ · `mvn test` ✅ · `spotless:check` ✅ · `build-storybook` ✅.
 - Pendências: nenhuma para o fechamento do M4.
+- Última atualização: 2026-05-12
+
+### Suíte Playwright E2E pós-M4
+
+- Status: Concluído
+- Evidência/verificação: `@playwright/test` adicionado; scripts `test:e2e`, `test:e2e:headed`, `test:e2e:ui` e `test:e2e:install` criados; `playwright.config.ts` configurado para rodar contra Docker Compose real; artefatos `.playwright-cli/`, `output/playwright/`, `playwright-report/` e `test-results/` ignorados no Git; suíte inicial em `tests/e2e/critical-flows.spec.ts` cobre fluxos críticos públicos e M4 em Chromium desktop/mobile; `apps/web/public/favicon.ico` elimina o `404` de favicon no console; Definition of Done atualizada para exigir Playwright quando a tarefa envolver comportamento navegável/testável em browser.
+- Gates: `npm run web:typecheck` passou; `npm run web:lint` passou; `npm run test:e2e:install` passou; `curl /favicon.ico` retornou `200 image/x-icon`; `npm run test:e2e` passou com 26 testes; `npm run web:build` passou; `npm --workspace @leonardosr/web run build-storybook` passou com warnings conhecidos de tamanho; `mvn -B -f apps/api/pom.xml test` passou com 22 testes; `mvn -B -f apps/api/pom.xml spotless:check` passou.
+- Pendências: nenhuma para a suíte Playwright pós-M4.
 - Última atualização: 2026-05-12
 
 ---

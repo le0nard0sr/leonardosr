@@ -76,6 +76,7 @@ Responda sempre em português do Brasil.
 - Responsividade e acessibilidade básica verificadas.
 - SEO considerado em toda página pública.
 - Console sem erros visíveis.
+- Testes Playwright criados e executados quando a tarefa envolver comportamento navegável/testável em browser.
 - OpenAPI atualizado para qualquer endpoint público ou administrativo.
 - ADR criado em `docs/adr/` para decisão arquitetural não óbvia.
 - Storybook atualizado para componentes de design system ou editoriais.
