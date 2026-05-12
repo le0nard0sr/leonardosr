@@ -1,0 +1,17 @@
+export const STATIC_ROUTES = [
+  "/",
+  "/sobre",
+  "/experiencia",
+  "/stack",
+  "/projetos",
+  "/conteudos",
+  "/conteudos/artigos",
+  "/conteudos/videos",
+  "/conteudos/series",
+  "/laboratorio",
+  "/arquiteturas",
+  "/curriculo",
+  "/contato",
+  "/privacidade",
+  "/termos",
+];

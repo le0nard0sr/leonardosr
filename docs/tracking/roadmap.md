@@ -244,11 +244,11 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ### M5-B2 — Sitemap, robots, RSS
 
-| ID   | Status  | Critério                                                                                | Evidência | Pendências                          | Última atualização |
-| ---- | ------- | --------------------------------------------------------------------------------------- | --------- | ----------------------------------- | ------------------ |
-| T023 | Backlog | `/sitemap.xml` lista rotas estáticas + dinâmicas com lastModified                       | —         | —                                   | —                  |
-| T024 | Backlog | `/robots.txt` reflete `seo.robotsPolicy` (`allow`/`disallow_admin`) e bloqueia `/admin` | —         | Suporte real a `custom` no M6 admin | —                  |
-| T027 | Backlog | `/rss.xml` retorna feed RSS 2.0 válido                                                  | —         | —                                   | —                  |
+| ID   | Status    | Critério                                                                                | Evidência                                                                                      | Pendências                          | Última atualização |
+| ---- | --------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------- | ------------------ |
+| T023 | Concluído | `/sitemap.xml` lista rotas estáticas + dinâmicas com lastModified                       | `app/sitemap.ts` gerado; build OK (44 rotas); rotas estáticas + projetos/conteudos/series/tags | —                                   | 2026-05-12         |
+| T024 | Concluído | `/robots.txt` reflete `seo.robotsPolicy` (`allow`/`disallow_admin`) e bloqueia `/admin` | `app/robots.ts` gerado; policy allow/disallow_admin implementada; custom → disallow_admin      | Suporte real a `custom` no M6 admin | 2026-05-12         |
+| T027 | Concluído | `/rss.xml` retorna feed RSS 2.0 válido                                                  | `app/rss.xml/route.ts` + `lib/seo/rss.ts`; RSS 2.0 com encodeXml + RFC-822 dates               | —                                   | 2026-05-12         |
 
 ---
 
