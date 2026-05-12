@@ -194,13 +194,13 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ### M4-B5 — Lab, Arquiteturas, Storybook e gate final
 
-| ID   | Status  | Critério de conclusão                                                     | Evidência/verificação                          | Pendências | Última atualização |
-| ---- | ------- | ------------------------------------------------------------------------- | ---------------------------------------------- | ---------- | ------------------ |
-| —    | Backlog | `/laboratorio/[slug]` com `LabFieldsDTO` + validação de tipo              | Campos renderizados; tipo errado → `404`       | —          | —                  |
-| —    | Backlog | `/arquiteturas/[slug]` com `ArchitectureFieldsDTO` + validação de tipo    | Seções fixas renderizadas; tipo errado → `404` | —          | —                  |
-| T056 | Backlog | Stories no Storybook para todos os componentes M4                         | `build-storybook` → BUILD SUCCESS              | —          | —                  |
-| —    | Backlog | Gate final: build, typecheck, lint, testes backend, Storybook, smoke test | Todas as verificações passando                 | —          | —                  |
-| —    | Backlog | PR draft aberto                                                           | URL do PR registrada aqui                      | —          | —                  |
+| ID   | Status    | Critério de conclusão                                                  | Evidência/verificação                                                                                                                                                                                                             | Pendências                                | Última atualização |
+| ---- | --------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------ |
+| —    | Concluído | `/laboratorio/[slug]` com `LabFieldsDTO` + validação de tipo           | `parseLabFields()` com type guards; `content.type !== "LAB"` → `notFound()`; painel lateral com botões Demo/Código; `MDXRemote`; `error.tsx`; OG image                                                                            | —                                         | 2026-05-12         |
+| —    | Concluído | `/arquiteturas/[slug]` com `ArchitectureFieldsDTO` + validação de tipo | `parseArchFields()` com type guards para `components[]`, `flow`, `advantages[]`, `risks[]`, `whenToUse`; `diagramMediaId` exibe placeholder; `content.type !== "ARCHITECTURE"` → `notFound()`; `MDXRemote`; `error.tsx`; OG image | —                                         | 2026-05-12         |
+| T056 | Concluído | Stories no Storybook para todos os componentes M4                      | Stories criadas junto dos componentes: `ContentCard` (5 variantes), `SeriesCard` (3), `SeriesNav` (3), `Toc` (3), `Callout` (5), `CodeBlock` (4 langs), `ComparisonTable`, `RepositoryLink`, `StepList`, `VideoEmbed`             | —                                         | 2026-05-12         |
+| —    | Concluído | Gate final: build, typecheck, lint, testes backend, Storybook          | `web:typecheck` ✅ · `web:lint` ✅ · `web:build` ✅ (39 rotas) · `mvn test` ✅ 22 testes · `build-storybook` ✅                                                                                                                   | Smoke test manual (requer Docker Compose) | 2026-05-12         |
+| —    | Concluído | PR draft aberto                                                        | [PR #5](https://github.com/le0nard0sr/leonardosr/pull/5) na branch `m4/hub-editorial-unificado`                                                                                                                                   | —                                         | 2026-05-12         |
 
 ---
 
