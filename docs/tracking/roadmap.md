@@ -97,24 +97,34 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ### M3-B5 — Metadata, OG e fechamento
 
-| ID   | Status    | Critério de conclusão                     | Evidência/verificação                                                                                               | Pendências                                    | Última atualização |
-| ---- | --------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------ |
-| —    | Concluído | Catch-all substituído por rotas dedicadas | `app/[[...slug]]/page.tsx` removido; 11 rotas dedicadas criadas                                                     | Nenhuma                                       | 2026-05-10         |
-| T054 | Concluído | OG image dinâmica                         | `app/opengraph-image.tsx` (global) e `app/projetos/[slug]/opengraph-image.tsx` (dinâmica por projeto) via `next/og` | Demais rotas com OG específica (follow-up M5) | 2026-05-10         |
-| —    | Concluído | ADR-006 criada                            | `docs/adr/006-metadata-og-fetch-ssr.md` registrando metadata, OG, cache SSR, safeFetch e o que fica para M5         | Nenhuma                                       | 2026-05-10         |
+| ID   | Status    | Critério de conclusão                     | Evidência/verificação                                                                                                                                                                  | Pendências                                            | Última atualização |
+| ---- | --------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------------ |
+| —    | Concluído | Catch-all substituído por rotas dedicadas | `app/[[...slug]]/page.tsx` removido; 11 rotas dedicadas criadas                                                                                                                        | Nenhuma                                               | 2026-05-10         |
+| T054 | Concluído | OG image dinâmica                         | 8 arquivos `opengraph-image.tsx`: global, Sobre, Experiência, Stack, Projetos, Currículo, Contato e dinâmica por projeto (`/projetos/[slug]`) via `next/og`; todos com `force-dynamic` | fallback.png estático (pendência M5 — requer `sharp`) | 2026-05-11         |
+| —    | Concluído | ADR-006 criada                            | `docs/adr/006-metadata-og-fetch-ssr.md` registrando metadata, OG, cache SSR, safeFetch e o que fica para M5                                                                            | Nenhuma                                               | 2026-05-10         |
+| —    | Concluído | canonical + openGraph por rota            | `alternates.canonical` e bloco `openGraph` adicionados em todas as 8 pages; canonical fixo removido do layout raiz                                                                     | Nenhuma                                               | 2026-05-11         |
+
+### Débitos técnicos registrados (a resolver no M5)
+
+| Débito                                | Descrição                                                                                                                                                                                                                                                                                                  | Impacto                         | Marco alvo |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | ---------- |
+| `force-dynamic` no layout raiz        | `export const dynamic = "force-dynamic"` no `RootLayout` impede ISR de HTML em todas as rotas. Data Cache (`revalidate: 60`) ainda funciona; o TTFB por request é rápido porque os dados são cacheados. Solução definitiva: mover para por-página + `safeFetch` tolerante a `NEXT_PHASE_PRODUCTION_BUILD`. | Baixo (dados cacheados mitigam) | M5         |
+| Fallback PNG `public/og/fallback.png` | ADR-006 prevê fallback estático 1200×630; geração requer `sharp` indisponível no ambiente de build.                                                                                                                                                                                                        | Baixo (OG dinâmica funcional)   | M5         |
+| Storybook para componentes DS novos   | `PageHeader`, `Stat`, `ProjectCard`, `TimelineRow`, `TechCell`, `FilterBar` sem stories.                                                                                                                                                                                                                   | Baixo (documentação visual)     | M5         |
 
 ### Gate final do M3
 
-- **Status:** Em andamento — aguardando validação manual e PR draft.
+- **Status:** Em andamento — aguardando validação manual.
 - **Verificações executadas:**
   - `mvn -B -f apps/api/pom.xml test` → 22 testes unitários; BUILD SUCCESS.
   - `mvn -B -f apps/api/pom.xml spotless:check` → BUILD SUCCESS.
   - `npm run web:lint` → sem erros.
   - `npm run web:typecheck` → sem erros.
-  - `npm run web:build` → BUILD SUCCESS; 11 rotas geradas (/, /sobre, /experiencia, /stack, /curriculo, /contato, /projetos, /projetos/[slug], /privacidade, /termos, /opengraph-image).
-- **Pendências:** validação manual das rotas em browser; smoke do formulário de contato; verificação do OG image; PR draft.
+  - `npm run web:build` → BUILD SUCCESS; rotas geradas com OG por segmento.
+  - PR draft aberto: [#4](https://github.com/le0nard0sr/leonardosr/pull/4)
+- **Pendências:** validação manual das rotas em browser; smoke do formulário de contato; verificação de canonical e OG via DevTools.
 - **Bloqueios:** nenhum.
-- **Última atualização:** 2026-05-10
+- **Última atualização:** 2026-05-11
 
 ---
 

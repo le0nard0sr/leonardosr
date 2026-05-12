@@ -10,6 +10,13 @@ export const metadata: Metadata = {
   title: "Currículo",
   description:
     "Currículo de Leonardo Silva Ribeiro — experiência profissional, stack técnica e projetos.",
+  alternates: { canonical: "/curriculo" },
+  openGraph: {
+    title: "Currículo | Leonardo Silva Ribeiro",
+    description:
+      "Currículo de Leonardo Silva Ribeiro — experiência profissional, stack técnica e projetos.",
+    url: "https://leonardosr.com.br/curriculo",
+  },
 };
 
 const FALLBACK_PROFILE: Profile = {

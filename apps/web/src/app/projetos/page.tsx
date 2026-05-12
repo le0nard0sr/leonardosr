@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   title: "Projetos",
   description:
     "Projetos reais de Leonardo Silva Ribeiro — decisões técnicas, stack e resultados.",
+  alternates: { canonical: "/projetos" },
+  openGraph: {
+    title: "Projetos | Leonardo Silva Ribeiro",
+    description:
+      "Projetos reais de Leonardo Silva Ribeiro — decisões técnicas, stack e resultados.",
+    url: "https://leonardosr.com.br/projetos",
+  },
 };
 
 export default async function ProjetosPage() {

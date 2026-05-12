@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   title: "Experiência",
   description:
     "Trajetória profissional de Leonardo Silva Ribeiro — cargos, organizações e principais entregas.",
+  alternates: { canonical: "/experiencia" },
+  openGraph: {
+    title: "Experiência | Leonardo Silva Ribeiro",
+    description:
+      "Trajetória profissional de Leonardo Silva Ribeiro — cargos, organizações e principais entregas.",
+    url: "https://leonardosr.com.br/experiencia",
+  },
 };
 
 export default async function ExperienciaPage() {

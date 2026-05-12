@@ -28,7 +28,12 @@ export async function generateMetadata({
     return {
       title: project.name,
       description: project.summary,
-      openGraph: { title: project.name, description: project.summary },
+      alternates: { canonical: `/projetos/${slug}` },
+      openGraph: {
+        title: project.name,
+        description: project.summary,
+        url: `https://leonardosr.com.br/projetos/${slug}`,
+      },
     };
   } catch {
     return { title: "Projeto" };

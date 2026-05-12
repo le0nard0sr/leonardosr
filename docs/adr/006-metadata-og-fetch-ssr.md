@@ -23,9 +23,10 @@ Cada `page.tsx` exporta `generateMetadata` (ou constante `metadata`) com `title`
 Arquivo `opengraph-image.tsx` colocado por segmento. Next.js detecta automaticamente e injeta a URL no `<head>` como `og:image` e `twitter:image`. Implementado em:
 
 - `/app/opengraph-image.tsx` — global, usa `profile.displayName` + `profile.headline`.
+- `/app/sobre/opengraph-image.tsx`, `/app/experiencia/opengraph-image.tsx`, `/app/stack/opengraph-image.tsx`, `/app/projetos/opengraph-image.tsx`, `/app/curriculo/opengraph-image.tsx`, `/app/contato/opengraph-image.tsx` — estáticas por segmento.
 - `/app/projetos/[slug]/opengraph-image.tsx` — dinâmica por projeto, usa nome e tecnologias.
 
-Fallback estático em `public/og/fallback.png` (1200×630) referenciado como `metadata.openGraph.images` apenas se `ImageResponse` for desabilitado.
+Fallback estático PNG (`public/og/fallback.png`) foi descartado do M3 — geração via script requer `sharp` ou canvas que não estão disponíveis no ambiente de build. Registrado como pendência do M5 junto com tipografia via fontes locais.
 
 Sem carregamento de fontes externas no M3 para evitar custo de Edge. Registro de melhoria de tipografia com fontes locais fica para M5.
 

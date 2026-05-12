@@ -15,9 +15,6 @@ export const metadata: Metadata = {
   description:
     "Site pessoal, portfólio profissional e hub de conteúdos técnicos sobre React, Next.js, Java e Spring Boot.",
   applicationName: "leonardosr.com.br",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     locale: "pt_BR",

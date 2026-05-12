@@ -11,6 +11,13 @@ export const metadata: Metadata = {
   title: "Sobre",
   description:
     "Trajetória técnica, abordagem e valores de Leonardo Silva Ribeiro — engenheiro de software com foco em React, Next.js e Spring Boot.",
+  alternates: { canonical: "/sobre" },
+  openGraph: {
+    title: "Sobre | Leonardo Silva Ribeiro",
+    description:
+      "Trajetória técnica, abordagem e valores de Leonardo Silva Ribeiro — engenheiro de software com foco em React, Next.js e Spring Boot.",
+    url: "https://leonardosr.com.br/sobre",
+  },
 };
 
 const FALLBACK_PROFILE: Profile = {

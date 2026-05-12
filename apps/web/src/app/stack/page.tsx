@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   title: "Stack",
   description:
     "Stack técnica de Leonardo Silva Ribeiro — React, Next.js, TypeScript, Java, Spring Boot e PostgreSQL.",
+  alternates: { canonical: "/stack" },
+  openGraph: {
+    title: "Stack | Leonardo Silva Ribeiro",
+    description:
+      "Stack técnica de Leonardo Silva Ribeiro — React, Next.js, TypeScript, Java, Spring Boot e PostgreSQL.",
+    url: "https://leonardosr.com.br/stack",
+  },
 };
 
 export default async function StackPage() {

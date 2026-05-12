@@ -13,6 +13,13 @@ export const metadata: Metadata = {
   title: "Início",
   description:
     "Portfólio profissional e hub de conteúdo técnico de Leonardo Silva Ribeiro — React, Next.js e Spring Boot.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Leonardo Silva Ribeiro | React, Next.js e Spring Boot",
+    description:
+      "Portfólio profissional e hub de conteúdo técnico de Leonardo Silva Ribeiro — React, Next.js e Spring Boot.",
+    url: "https://leonardosr.com.br",
+  },
 };
 
 const FALLBACK_PROFILE: Profile = {

@@ -11,6 +11,13 @@ export const metadata: Metadata = {
   title: "Contato",
   description:
     "Entre em contato com Leonardo Silva Ribeiro para conversas técnicas e oportunidades.",
+  alternates: { canonical: "/contato" },
+  openGraph: {
+    title: "Contato | Leonardo Silva Ribeiro",
+    description:
+      "Entre em contato com Leonardo Silva Ribeiro para conversas técnicas e oportunidades.",
+    url: "https://leonardosr.com.br/contato",
+  },
 };
 
 const FALLBACK_PROFILE: Profile = {
