@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
+import { Container } from "@/components/ui/container";
+import { ArchitectureCard } from "@/components/ui/architecture-card";
 import { PageHeader } from "@/components/ui/page-header";
+import { safeFetch } from "@/lib/api/errors";
+import { getContents } from "@/lib/api/public";
 
 export const metadata: Metadata = {
   title: "Arquiteturas",
@@ -14,12 +18,33 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ArquiteturasPage() {
+export default async function ArquiteturasPage() {
+  const contents = await safeFetch(
+    () => getContents({ type: "ARCHITECTURE" }),
+    [],
+    "arquiteturas.list",
+  );
+
   return (
-    <PageHeader
-      eyebrow="Em breve"
-      title="Arquiteturas"
-      lede="Diagramas e estudos de arquitetura de software estão a caminho. Esta seção será ativada no próximo marco."
-    />
+    <>
+      <PageHeader
+        eyebrow="Arquiteturas"
+        title="Estudos de arquitetura"
+        lede="Diagramas, análises e decisões de design para sistemas distribuídos, microsserviços e padrões de software."
+      />
+      <Container className="py-12 md:py-16">
+        {contents.length === 0 ? (
+          <p className="text-[color:var(--fg-muted)]">
+            Nenhuma arquitetura publicada ainda.
+          </p>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {contents.map((content) => (
+              <ArchitectureCard key={content.slug} content={content} />
+            ))}
+          </div>
+        )}
+      </Container>
+    </>
   );
 }

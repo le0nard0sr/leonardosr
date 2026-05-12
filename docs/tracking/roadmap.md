@@ -129,6 +129,79 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 - **Bloqueios:** nenhum.
 - **Última atualização:** 2026-05-11
 
+## Marco 4 — Hub editorial unificado
+
+**Branch:** `m4/hub-editorial-unificado`
+**Objetivo:** Implementar hub editorial unificado — todas as rotas de conteúdo público funcionando com dados reais do backend.
+
+---
+
+### M4-B1 — Base editorial frontend e contratos
+
+| ID  | Status    | Critério de conclusão                                                             | Evidência/verificação                                                                                      | Pendências | Última atualização |
+| --- | --------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------- | ------------------ |
+| —   | Concluído | Branch `m4/hub-editorial-unificado` criada                                        | `git checkout -b m4/hub-editorial-unificado`                                                               | —          | 2026-05-12         |
+| —   | Concluído | Tipos `Content`, `Tag`, `Series`, `SeriesItem`, `TagDetail` em `lib/api/types.ts` | Arquivo atualizado com todos os tipos editoriais                                                           | —          | 2026-05-12         |
+| —   | Concluído | Loaders SSR em `lib/api/public.ts` com `REVALIDATE_LIST`/`REVALIDATE_DETAIL`      | `getContents`, `getContentBySlug`, `getSeries`, `getSeriesBySlug`, `getTags`, `getTagBySlug` implementados | —          | 2026-05-12         |
+| —   | Concluído | `ContentCard` criado                                                              | `src/components/ui/content-card.tsx`; thumbnail `<img>` para vídeos; sem iframe em listagem                | —          | 2026-05-12         |
+| —   | Concluído | `SeriesCard` criado                                                               | `src/components/ui/series-card.tsx`; barra de progresso calculada por publicados/total                     | —          | 2026-05-12         |
+| —   | Concluído | `typecheck`, `lint` e `build` passando                                            | Zero erros; build gerou 22 rotas; `eslint-disable` comentado para `<img>` intencional                      | —          | 2026-05-12         |
+
+---
+
+### M4-B2 — Listagens públicas
+
+| ID   | Status    | Critério de conclusão                                                           | Evidência/verificação                                                                                                                                                    | Pendências | Última atualização |
+| ---- | --------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ------------------ |
+| T018 | Concluído | `/conteudos` — hub geral com FilterBar por tipo e tag (URL compartilhável)      | `contents-list.tsx` client com `useSearchParams` + `router.replace`; `<Suspense>` no page server; `ConteudosList` com `FILTER_TYPES` mapeando todos os 4 filtros         | —          | 2026-05-12         |
+| T018 | Concluído | `/conteudos/artigos` — listagem filtrada por `type=ARTICLE`                     | `app/conteudos/artigos/page.tsx` com `safeFetch(() => getContents({ type: "ARTICLE" }))` e grid de `ContentCard`                                                         | —          | 2026-05-12         |
+| T018 | Concluído | `/conteudos/videos` — listagem VIDEO + ARTICLE_WITH_VIDEO mesclados e ordenados | `app/conteudos/videos/page.tsx` com `Promise.all`; merge + `sort` por `publishedAt`; thumbnails `<img>` sem iframe                                                       | —          | 2026-05-12         |
+| T018 | Concluído | `/conteudos/series` — listagem de séries com `SeriesCard`                       | `app/conteudos/series/page.tsx` com `safeFetch(getSeries)`; grid de `SeriesCard` com barra de progresso                                                                  | —          | 2026-05-12         |
+| —    | Concluído | `/laboratorio` e `/arquiteturas` — substituir placeholders com listagens reais  | `laboratorio/page.tsx` com `LabCard`; `arquiteturas/page.tsx` com `ArchitectureCard`; ambos com `getContents({ type })`                                                  | —          | 2026-05-12         |
+| —    | Concluído | OG images estáticas em todas as listagens                                       | `opengraph-image.tsx` criado em `/conteudos`, `/conteudos/artigos`, `/conteudos/videos`, `/conteudos/series`, `/laboratorio`, `/arquiteturas`; todos com `force-dynamic` | —          | 2026-05-12         |
+| —    | Concluído | `typecheck`, `lint` e `build` passando                                          | `npm run web:typecheck` → zero erros; `npm run web:lint` → zero erros; `npm run web:build` → BUILD SUCCESS; todas as 6 listagens e 6 OG images no output                 | —          | 2026-05-12         |
+
+---
+
+### M4-B3 — Página individual de conteúdo e MDX
+
+| ID   | Status    | Critério de conclusão                                                                                                                               | Evidência/verificação                                                                                                                                                                         | Pendências | Última atualização |
+| ---- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------ |
+| —    | Concluído | `next-mdx-remote` e `@mdx-js/mdx` instalados                                                                                                        | `npm install next-mdx-remote @mdx-js/mdx` executado; `package.json` atualizado                                                                                                                | —          | 2026-05-12         |
+| T019 | Concluído | `/conteudos/[slug]` renderiza MDX com componentes editoriais                                                                                        | `app/conteudos/[slug]/page.tsx` com `MDXRemote source={content.body} components={getMdxComponents()}`; `generateStaticParams`; `notFound()` em 404; `ApiError` distinguido de erros gerais    | —          | 2026-05-12         |
+| T056 | Concluído | Biblioteca MDX: 9 componentes (Callout, CodeBlock, ComparisonTable, ArchitectureDiagram, VideoEmbed, RepositoryLink, StepList, WarningBox, InfoBox) | Todos em `components/mdx/`; registrados em `mdx-components.tsx` via `BASE_COMPONENTS`; `getMdxComponents()` e `useMDXComponents()` expõem o mesmo mapa                                        | —          | 2026-05-12         |
+| T055 | Concluído | TOC com IDs alinhados (`slugifyHeading` + `headingToText`) em `lib/toc.ts`                                                                          | `extractToc()` extrai h2/h3 do MDX; h2/h3 em `mdx-components.tsx` geram `id` via `slugifyHeading(headingToText(children))`; `Toc` client component com `IntersectionObserver` para item ativo | —          | 2026-05-12         |
+| T055 | Concluído | Barra de progresso de leitura                                                                                                                       | `ReadingProgress` client component com scroll listener e `role="progressbar"`; exibida em toda página de detalhe                                                                              | —          | 2026-05-12         |
+| T020 | Concluído | `VideoEmbed` com lazy loading (facade thumbnail → iframe)                                                                                           | `VideoEmbed` client: thumbnail `<img>` → iframe com `autoplay=1` ao clicar; sem iframe antecipado; disponível no MDX via `<VideoEmbed videoId="..." />`                                       | —          | 2026-05-12         |
+| T069 | Concluído | `lib/mdx-validate.ts` — utilitário de compilação (base para M6)                                                                                     | `validateMdx(source)` compila via `@mdx-js/mdx` e retorna `{ ok: boolean; error?: string }`; escopo: valida sintaxe MDX no frontend; regras de allowlist ficam no backend                     | —          | 2026-05-12         |
+| —    | Concluído | Conteúdos relacionados no rodapé                                                                                                                    | Busca `getContents({ tag: content.tags[0].slug })`; filtra slug atual; exibe até 3 `ContentCard`; seção omitida se vazia                                                                      | —          | 2026-05-12         |
+| —    | Concluído | OG image dinâmica por conteúdo; `error.tsx`                                                                                                         | `opengraph-image.tsx` busca título e tipo via `getContentBySlug`; `error.tsx` com botão "Tentar novamente" (client boundary)                                                                  | —          | 2026-05-12         |
+| —    | Concluído | `typecheck`, `lint` e `build` passando                                                                                                              | Zero erros; `/conteudos/[slug]` aparece como SSG no output do build                                                                                                                           | —          | 2026-05-12         |
+
+---
+
+### M4-B4 — Séries e Tags
+
+| ID   | Status    | Critério de conclusão                                                | Evidência/verificação                                                                                                                                                                             | Pendências | Última atualização |
+| ---- | --------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------ |
+| T021 | Concluído | `/conteudos/series/[slug]` — conteúdos em ordem; link com `?series=` | `app/conteudos/series/[slug]/page.tsx`; items ordenados por `sortOrder`; `ContentCard` recebe `href=/conteudos/${slug}?series=${seriesSlug}`; itens não publicados exibem placeholder "Em breve"  | —          | 2026-05-12         |
+| T021 | Concluído | Navegação prev/next calculada no servidor (sem SWR)                  | `SeriesNav` component recebe `prev`, `next`, `seriesTitle`, `seriesSlug` como props; calculado em `page.tsx` via `searchParams.series`; sem fetch client-side; exibido acima e abaixo do conteúdo | —          | 2026-05-12         |
+| T022 | Concluído | `/tags/[slug]` — conteúdos da tag; sem projetos no M4                | `app/tags/[slug]/page.tsx`; `getTagBySlug` retorna `{ tag, contents }`; grid de `ContentCard`; sem seção de projetos (backend não expõe)                                                          | —          | 2026-05-12         |
+| —    | Concluído | `generateStaticParams`, `notFound()`, OG images em série e tag       | `generateStaticParams` em série (via `getSeries`) e tag (via `getTags`); `notFound()` para 404; `opengraph-image.tsx` dinâmico em ambas as rotas                                                  | —          | 2026-05-12         |
+| —    | Concluído | `typecheck`, `lint` e `build` passando                               | Zero erros; `/conteudos/series/[slug]` e `/tags/[slug]` no output do build como SSG                                                                                                               | —          | 2026-05-12         |
+
+---
+
+### M4-B5 — Lab, Arquiteturas, Storybook e gate final
+
+| ID   | Status  | Critério de conclusão                                                     | Evidência/verificação                          | Pendências | Última atualização |
+| ---- | ------- | ------------------------------------------------------------------------- | ---------------------------------------------- | ---------- | ------------------ |
+| —    | Backlog | `/laboratorio/[slug]` com `LabFieldsDTO` + validação de tipo              | Campos renderizados; tipo errado → `404`       | —          | —                  |
+| —    | Backlog | `/arquiteturas/[slug]` com `ArchitectureFieldsDTO` + validação de tipo    | Seções fixas renderizadas; tipo errado → `404` | —          | —                  |
+| T056 | Backlog | Stories no Storybook para todos os componentes M4                         | `build-storybook` → BUILD SUCCESS              | —          | —                  |
+| —    | Backlog | Gate final: build, typecheck, lint, testes backend, Storybook, smoke test | Todas as verificações passando                 | —          | —                  |
+| —    | Backlog | PR draft aberto                                                           | URL do PR registrada aqui                      | —          | —                  |
+
 ---
 
 ### Consolidação do PRD V3 como fonte de verdade

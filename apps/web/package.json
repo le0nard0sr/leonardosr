@@ -15,9 +15,11 @@
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
+    "@mdx-js/mdx": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
     "@next/mdx": "latest",
     "next": "latest",
+    "next-mdx-remote": "^6.0.0",
     "react": "latest",
     "react-dom": "latest",
     "shiki": "latest"
