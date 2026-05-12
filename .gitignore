@@ -19,4 +19,5 @@ target/
 
 .idea/
 .vscode/
+.claude/
 *.log
