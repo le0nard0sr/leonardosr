@@ -275,12 +275,12 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ### M5-B5 — Lighthouse CI + Playwright E2E + ADRs + gate final + PR draft
 
-| ID   | Status       | Critério                                                            | Evidência                                                                                                                      | Pendências                                     | Última atualização |
-| ---- | ------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------- | ------------------ |
-| T058 | Em andamento | `.lighthouserc.json` + workflow rodam Lighthouse CI com budgets CWV | `.lighthouserc.json` + `.github/workflows/lighthouse.yml` criados; budgets alinhados ao PRD                                    | Workflow valida no primeiro PR com stack ativa | 2026-05-12         |
-| —    | Concluído    | Playwright E2E cobre sitemap/robots/RSS/JSON-LD/404                 | `npm run test:e2e` passou com 36 testes em Chromium desktop/mobile; cobre sitemap, robots, RSS, JSON-LD, 404 e fluxos críticos | —                                              | 2026-05-12         |
-| —    | Concluído    | ADR-017 e ADR-018 criados                                           | `docs/adr/017-lighthouse-ci-budgets.md` e `docs/adr/018-seo-tecnico-nextjs.md`                                                 | —                                              | 2026-05-12         |
-| —    | Concluído    | Gate final M5                                                       | typecheck/lint/build/test:e2e/Maven/Spotless OK; [PR draft #6](https://github.com/le0nard0sr/leonardosr/pull/6) aberto         | Workflow Lighthouse valida no GitHub Actions   | 2026-05-12         |
+| ID   | Status    | Critério                                                            | Evidência                                                                                                                      | Pendências | Última atualização |
+| ---- | --------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------- | ------------------ |
+| T058 | Concluído | `.lighthouserc.json` + workflow rodam Lighthouse CI com budgets CWV | Lighthouse CI #1, #2 e #3 verdes no PR #6 (~6 min cada); budgets CWV respeitados em 6 URLs                                     | —          | 2026-05-12         |
+| —    | Concluído | Playwright E2E cobre sitemap/robots/RSS/JSON-LD/404                 | `npm run test:e2e` passou com 36 testes em Chromium desktop/mobile; cobre sitemap, robots, RSS, JSON-LD, 404 e fluxos críticos | —          | 2026-05-12         |
+| —    | Concluído | ADR-017 e ADR-018 criados                                           | `docs/adr/017-lighthouse-ci-budgets.md` e `docs/adr/018-seo-tecnico-nextjs.md`                                                 | —          | 2026-05-12         |
+| —    | Concluído | Gate final M5                                                       | typecheck/lint/build/test:e2e/Maven/Spotless/Lighthouse CI OK; PR #6 mergeado em main                                          | —          | 2026-05-12         |
 
 ### Gate final M5
 
