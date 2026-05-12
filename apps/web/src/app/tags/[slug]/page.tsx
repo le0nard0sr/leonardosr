@@ -70,7 +70,12 @@ export default async function TagDetalhePage({ params }: PageProps) {
 
   const { tag, contents } = tagDetail;
 
-  const bcItems = buildBreadcrumbsFor("tags", slug, tag.name, seo?.siteUrl);
+  const bcItems = buildBreadcrumbsFor(
+    "conteudos",
+    slug,
+    tag.name,
+    seo?.siteUrl,
+  );
 
   return (
     <>
@@ -81,7 +86,7 @@ export default async function TagDetalhePage({ params }: PageProps) {
           <Breadcrumbs
             items={[
               { label: "início", href: "/" },
-              { label: "tags", href: "/tags" },
+              { label: "conteúdos", href: "/conteudos" },
               { label: slug },
             ]}
           />
