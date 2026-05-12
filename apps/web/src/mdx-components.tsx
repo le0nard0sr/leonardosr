@@ -1,4 +1,5 @@
 import type { MDXComponents } from "mdx/types";
+import type { ReactElement } from "react";
 import { Callout } from "@/components/mdx/callout";
 import { CodeBlock } from "@/components/mdx/code-block";
 import { ComparisonTable } from "@/components/mdx/comparison-table";
@@ -58,6 +59,21 @@ const BASE_COMPONENTS: MDXComponents = {
   strong: ({ children }) => (
     <strong className="font-semibold text-[color:var(--fg)]">{children}</strong>
   ),
+  code: ({ children }) => (
+    <code className="rounded px-1.5 py-0.5 font-mono text-sm bg-[color:var(--bg-subtle)] text-[color:var(--fg)]">
+      {children}
+    </code>
+  ),
+  pre: ({ children }) => {
+    const codeEl = children as ReactElement<{
+      className?: string;
+      children?: string;
+    }>;
+    const className = codeEl?.props?.className ?? "";
+    const lang = className.replace("language-", "") || "text";
+    const code = (codeEl?.props?.children ?? "").trimEnd();
+    return <CodeBlock code={code} lang={lang} />;
+  },
   Callout,
   CodeBlock,
   ComparisonTable,

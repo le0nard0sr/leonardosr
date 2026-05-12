@@ -202,6 +202,19 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 | —    | Concluído | Gate final: build, typecheck, lint, testes backend, Storybook          | `web:typecheck` ✅ · `web:lint` ✅ · `web:build` ✅ (39 rotas) · `mvn test` ✅ 22 testes · `build-storybook` ✅                                                                                                                   | Smoke test manual (requer Docker Compose) | 2026-05-12         |
 | —    | Concluído | PR draft aberto                                                        | [PR #5](https://github.com/le0nard0sr/leonardosr/pull/5) na branch `m4/hub-editorial-unificado`                                                                                                                                   | —                                         | 2026-05-12         |
 
+### Correções pós-revisão Codex (M4)
+
+- Status: Concluído
+- Evidência/verificação:
+  - **Filtros por tag e tecnologia em `/conteudos`**: `page.tsx` busca `getTags()` e `getTechnologies()` em paralelo; `contents-list.tsx` expõe dois `<select>` nativos que refletem filtros na URL (`?tag=`, `?technology=`); filtragem AND client-side entre tipo, tag e tecnologia.
+  - **CodeBlock `pre`/`code` MDX**: `mdx-components.tsx` agora mapeia `pre` (extrai `lang` do `className` e roteia para `CodeBlock`) e `code` (inline); fenced blocks Markdown passam automaticamente pelo `CodeBlock` com Shiki.
+  - **Copy-to-clipboard**: `copy-button.tsx` criado ("use client"); `code-block.tsx` inclui `CopyButton` com posicionamento absoluto; botão exibe "copiar" / "copiado" com feedback de 2s; padding-right ajustado para não sobrepor código.
+  - **TOC mobile colapsável**: `toc.tsx` recebe `collapsible?: boolean`; quando `true`, envolve em `<details>/<summary>`; `[slug]/page.tsx` renderiza `<Toc collapsible />` antes do artigo (`lg:hidden`) e TOC sticky na sidebar (`hidden lg:block`).
+  - **Destaque de linhas**: `@shikijs/transformers` não instalado — registrado como pendência para M6 (editor admin expõe notação `// [!code highlight]`).
+  - Gate pós-correções: `web:typecheck` ✅ · `web:lint` ✅ · `web:build` ✅ (compilação bem-sucedida)
+- Pendências: smoke test manual com Docker Compose; destaque de linhas no Shiki (M6).
+- Última atualização: 2026-05-12
+
 ---
 
 ### Consolidação do PRD V3 como fonte de verdade

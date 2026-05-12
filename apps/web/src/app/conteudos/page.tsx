@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
 import { PageHeader } from "@/components/ui/page-header";
 import { safeFetch } from "@/lib/api/errors";
-import { getContents } from "@/lib/api/public";
+import { getContents, getTags, getTechnologies } from "@/lib/api/public";
 import { ConteudosList } from "./contents-list";
 
 export const metadata: Metadata = {
@@ -20,7 +20,11 @@ export const metadata: Metadata = {
 };
 
 export default async function ConteudosPage() {
-  const contents = await safeFetch(getContents, [], "conteudos.list");
+  const [contents, tags, technologies] = await Promise.all([
+    safeFetch(getContents, [], "conteudos.list"),
+    safeFetch(getTags, [], "conteudos.tags"),
+    safeFetch(getTechnologies, [], "conteudos.techs"),
+  ]);
 
   return (
     <>
@@ -31,7 +35,11 @@ export default async function ConteudosPage() {
       />
       <Container className="py-12 md:py-16">
         <Suspense>
-          <ConteudosList contents={contents} />
+          <ConteudosList
+            contents={contents}
+            tags={tags}
+            technologies={technologies}
+          />
         </Suspense>
       </Container>
     </>

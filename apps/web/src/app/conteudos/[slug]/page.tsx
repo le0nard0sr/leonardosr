@@ -203,6 +203,13 @@ export default async function ConteudoDetalhePage({
 
       {/* CORPO */}
       <Container className="py-12 md:py-16">
+        {/* TOC mobile: colapsável no topo */}
+        {showToc ? (
+          <div className="mb-8 lg:hidden">
+            <Toc items={toc} collapsible />
+          </div>
+        ) : null}
+
         <div className={showToc ? "grid gap-12 lg:grid-cols-[1fr_220px]" : ""}>
           <article className="prose-content min-w-0">
             {seriesNav ? (
@@ -230,6 +237,7 @@ export default async function ConteudoDetalhePage({
             ) : null}
           </article>
 
+          {/* TOC desktop: sticky sidebar */}
           {showToc ? (
             <aside className="hidden lg:block">
               <div className="sticky top-24">
