@@ -8,6 +8,10 @@ storybook-static/
 apps/web/storybook-static/
 apps/web/src/lib/api/schema.ts
 coverage/
+playwright-report/
+test-results/
+.playwright-cli/
+output/playwright/
 
 target/
 *.class
@@ -19,4 +23,5 @@ target/
 
 .idea/
 .vscode/
+.claude/
 *.log

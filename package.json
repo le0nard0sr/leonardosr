@@ -11,6 +11,10 @@
     "web:lint": "npm --workspace @leonardosr/web run lint",
     "web:typecheck": "npm --workspace @leonardosr/web run typecheck",
     "storybook": "npm --workspace @leonardosr/web run storybook",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:install": "playwright install chromium",
     "build": "npm run web:build",
     "lint": "npm run web:lint",
     "typecheck": "npm run web:typecheck",
@@ -19,6 +23,8 @@
   "devDependencies": {
     "@commitlint/cli": "^20.0.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.7.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.0.0",
     "prettier": "^3.5.0"

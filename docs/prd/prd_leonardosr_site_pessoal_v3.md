@@ -2408,6 +2408,7 @@ Uma tarefa será considerada concluída quando:
 - Acessibilidade básica considerada.
 - SEO considerado quando a tarefa envolver página pública.
 - Sem erros visíveis no console.
+- Testes Playwright criados e executados quando a tarefa envolver comportamento navegável/testável em browser.
 - **Contrato OpenAPI atualizado**, quando a tarefa envolver endpoint público ou administrativo.
 - **ADR registrado em `/docs/adr/`**, quando a tarefa envolver decisão arquitetural não óbvia.
 - **Componente documentado no Storybook**, quando a tarefa envolver criação ou alteração de componente do design system ou componente editorial MDX.
