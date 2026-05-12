@@ -15,7 +15,7 @@ export default defineConfig({
     video: "retain-on-failure",
   },
   webServer: {
-    command: "docker compose up -d --build api web",
+    command: "docker compose up --build api web",
     url: "http://localhost:3000/conteudos",
     reuseExistingServer: true,
     timeout: 180_000,

@@ -110,3 +110,17 @@ export type Series = {
 
 // Backend retorna { tag, contents } — sem projects neste endpoint no M4
 export type TagDetail = { tag: Tag; contents: Content[] };
+
+export type SeoSettings = {
+  defaultTitle: string;
+  defaultDescription: string;
+  defaultLocale: string;
+  defaultAuthorName: string;
+  defaultOgImageUrl?: string | null;
+  siteUrl: string;
+  mediaCdnBaseUrl: string;
+  twitterHandle?: string | null;
+  robotsPolicy: string;
+  googleVerification?: string | null;
+  bingVerification?: string | null;
+};

@@ -1,10 +1,20 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { JsonLd } from "@/components/seo/json-ld";
 import { ApiError } from "@/lib/api/client";
-import { getProjectBySlug, getProjects } from "@/lib/api/public";
+import {
+  getProfile,
+  getProjectBySlug,
+  getProjects,
+  getSeoSettings,
+} from "@/lib/api/public";
+import { safeFetch } from "@/lib/api/errors";
+import { buildBreadcrumbsFor } from "@/lib/seo/breadcrumbs";
+import { buildBreadcrumbSchema, buildProjectSchema } from "@/lib/seo/json-ld";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -47,8 +57,13 @@ export default async function ProjetoDetalhePage({ params }: PageProps) {
   try {
     project = await getProjectBySlug(slug);
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
-      notFound();
+    if (error instanceof ApiError) {
+      if (error.status === 404) notFound();
+      if (
+        error.status === 503 &&
+        process.env.NEXT_PHASE === "phase-production-build"
+      )
+        notFound();
     }
     throw error;
   }
@@ -57,25 +72,35 @@ export default async function ProjetoDetalhePage({ params }: PageProps) {
     ? new Date(project.publishedAt).getFullYear()
     : null;
 
+  const [seo, profile] = await Promise.all([
+    safeFetch(getSeoSettings, null, "projeto.seo"),
+    safeFetch(getProfile, null, "projeto.profile"),
+  ]);
+
+  const bcItems = buildBreadcrumbsFor(
+    "projetos",
+    slug,
+    project.name,
+    seo?.siteUrl,
+  );
+
   return (
     <>
+      {seo && profile && (
+        <JsonLd data={buildProjectSchema(project, profile, seo)} />
+      )}
+      <JsonLd data={buildBreadcrumbSchema(bcItems)} />
+
       {/* BREADCRUMB */}
       <div className="border-b border-[color:var(--border)]">
         <Container className="py-3">
-          <nav
-            aria-label="Breadcrumb"
-            className="flex items-center gap-2 font-mono text-xs text-[color:var(--fg-faint)]"
-          >
-            <Link href="/" className="hover:text-[color:var(--fg)]">
-              início
-            </Link>
-            <span>/</span>
-            <Link href="/projetos" className="hover:text-[color:var(--fg)]">
-              projetos
-            </Link>
-            <span>/</span>
-            <span className="text-[color:var(--fg-muted)]">{project.slug}</span>
-          </nav>
+          <Breadcrumbs
+            items={[
+              { label: "início", href: "/" },
+              { label: "projetos", href: "/projetos" },
+              { label: project.slug },
+            ]}
+          />
         </Container>
       </div>
 

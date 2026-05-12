@@ -8,7 +8,10 @@ export async function safeFetch<T>(
   try {
     return await loader();
   } catch (error) {
-    if (process.env.NODE_ENV !== "production" && error instanceof ApiError) {
+    const isBuildTime =
+      process.env.NODE_ENV !== "production" ||
+      process.env.NEXT_PHASE === "phase-production-build";
+    if (isBuildTime && error instanceof ApiError) {
       console.warn(`[api:fallback] ${label}: ${error.message}`);
       return fallback;
     }

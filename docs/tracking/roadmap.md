@@ -227,6 +227,82 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ---
 
+## Marco 5 — SEO técnico avançado (preparação)
+
+**Branch:** `m5/seo-tecnico-avancado`
+**Objetivo:** Implementar SEO técnico completo (sitemap, robots, RSS, JSON-LD, Twitter Cards, breadcrumbs, meta-verificação Google/Bing) e preparar base para ativação pós-deploy do M8. Inclui débitos do M3: remover `force-dynamic` global, gerar fallback OG estático, completar stories de DS.
+
+---
+
+### M5-B1 — Backend público SEO + tipos frontend
+
+| ID  | Status    | Critério                                                                                     | Evidência                                                                                                                                                                                  | Pendências | Última atualização |
+| --- | --------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ------------------ |
+| —   | Concluído | `GET /api/public/settings/seo` retorna `PublicSeoDto` enxuto + `getSeoSettings()` SSR pronto | `mvn test` → 29 testes unitários (7 novos `PublicSeoDtoTest`); `spotless:check` ✅; `web:typecheck` ✅; `web:lint` ✅; `generate:api` regenerou `schema.ts` com `/api/public/settings/seo` | —          | 2026-05-12         |
+
+---
+
+### M5-B2 — Sitemap, robots, RSS
+
+| ID   | Status    | Critério                                                                                | Evidência                                                                                      | Pendências                          | Última atualização |
+| ---- | --------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------- | ------------------ |
+| T023 | Concluído | `/sitemap.xml` lista rotas estáticas + dinâmicas com lastModified                       | `app/sitemap.ts` gerado; build OK (44 rotas); rotas estáticas + projetos/conteudos/series/tags | —                                   | 2026-05-12         |
+| T024 | Concluído | `/robots.txt` reflete `seo.robotsPolicy` (`allow`/`disallow_admin`) e bloqueia `/admin` | `app/robots.ts` gerado; policy allow/disallow_admin implementada; custom → disallow_admin      | Suporte real a `custom` no M6 admin | 2026-05-12         |
+| T027 | Concluído | `/rss.xml` retorna feed RSS 2.0 válido                                                  | `app/rss.xml/route.ts` + `lib/seo/rss.ts`; RSS 2.0 com encodeXml + RFC-822 dates               | —                                   | 2026-05-12         |
+
+---
+
+### M5-B3 — JSON-LD, Twitter Cards, Breadcrumbs, meta-verificação, 404
+
+| ID    | Status    | Critério                                                              | Evidência                                                                                      | Pendências                                 | Última atualização |
+| ----- | --------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------ |
+| T025  | Concluído | JSON-LD Person/Article/Video/Breadcrumb passa em validator.schema.org | lib/seo/json-ld.ts com Person/WebSite/Article/Video/BreadcrumbList; build OK                   | Validar em validator.schema.org pós-deploy | 2026-05-12         |
+| T026  | Concluído | Twitter Cards em todas as páginas + meta-verificação Google/Bing      | buildBaseMetadata: twitter.card=summary_large_image; verification.google/other msvalidate.01   | —                                          | 2026-05-12         |
+| T057a | Concluído | Breadcrumbs componente reutilizável + JSON-LD BreadcrumbList          | components/ui/breadcrumbs.tsx + story; BreadcrumbList em 6 rotas de detalhe; visual em 6 rotas | —                                          | 2026-05-12         |
+| —     | Concluído | 404 otimizada com `robots: noindex` e CTAs                            | not-found.tsx com metadata robots noindex + 4 CTAs                                             | —                                          | 2026-05-12         |
+
+---
+
+### M5-B4 — Débitos M3: force-dynamic global, safeFetch, OG fallback, stories DS
+
+| ID              | Status    | Critério                                                        | Evidência                                                                                                                                 | Pendências | Última atualização |
+| --------------- | --------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------ |
+| —               | Concluído | Build Next sem `force-dynamic` global e tolerante a API offline | `npm run web:build` passa com API offline; ISR por página com `revalidate`; `safeFetch` + `ApiError 503→notFound()` em páginas de detalhe | —          | 2026-05-12         |
+| T054 (fallback) | Concluído | `public/og/fallback.png` gerado e referenciado                  | Script `og:fallback` gera PNG 38638 bytes; arquivo commitado; OG layout reference `/og/fallback.png`                                      | —          | 2026-05-12         |
+| —               | Concluído | Stories para 6 componentes DS                                   | `build-storybook` lista page-header, stat, project-card, timeline-row, tech-cell, filter-bar                                              | —          | 2026-05-12         |
+
+---
+
+### M5-B5 — Lighthouse CI + Playwright E2E + ADRs + gate final + PR draft
+
+| ID   | Status       | Critério                                                            | Evidência                                                                                                                      | Pendências                                     | Última atualização |
+| ---- | ------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------- | ------------------ |
+| T058 | Em andamento | `.lighthouserc.json` + workflow rodam Lighthouse CI com budgets CWV | `.lighthouserc.json` + `.github/workflows/lighthouse.yml` criados; budgets alinhados ao PRD                                    | Workflow valida no primeiro PR com stack ativa | 2026-05-12         |
+| —    | Concluído    | Playwright E2E cobre sitemap/robots/RSS/JSON-LD/404                 | `npm run test:e2e` passou com 36 testes em Chromium desktop/mobile; cobre sitemap, robots, RSS, JSON-LD, 404 e fluxos críticos | —                                              | 2026-05-12         |
+| —    | Concluído    | ADR-017 e ADR-018 criados                                           | `docs/adr/017-lighthouse-ci-budgets.md` e `docs/adr/018-seo-tecnico-nextjs.md`                                                 | —                                              | 2026-05-12         |
+| —    | Concluído    | Gate final M5                                                       | typecheck/lint/build/test:e2e/Maven/Spotless OK; [PR draft #6](https://github.com/le0nard0sr/leonardosr/pull/6) aberto         | Workflow Lighthouse valida no GitHub Actions   | 2026-05-12         |
+
+### Gate final M5
+
+- [x] `npm run web:typecheck` — passou
+- [x] `npm run web:lint` — passou
+- [x] `npm run web:build` (com API offline) — passou (44 rotas)
+- [x] `npm --workspace @leonardosr/web run build-storybook` — passou
+- [x] `mvn -B -f apps/api/pom.xml verify` — passou
+- [x] `mvn -B -f apps/api/pom.xml spotless:check` — passou
+- [x] `npm run test:e2e` — passou com 36 testes
+- [x] `npm --workspace @leonardosr/web run generate:api` — regenerou `schema.ts` com `/api/public/settings/seo`
+- [x] PR draft aberto contra `main` — [PR #6](https://github.com/le0nard0sr/leonardosr/pull/6)
+
+**Follow-ups registrados:**
+
+- Suporte real a `robotsPolicy=custom` (campo de regras livres no admin) → M6
+- Paginacao em endpoints sitemap/RSS quando volume crescer → M6
+- Tokens reais Google Search Console e Bing Webmaster → M8 (T057b)
+- Verificacao de dominio e submissao de sitemap → M8
+
+---
+
 ### Consolidação do PRD V3 como fonte de verdade
 
 - Status: Concluído

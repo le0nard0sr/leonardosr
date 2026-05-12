@@ -1,11 +1,16 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { ContentCard } from "@/components/ui/content-card";
 import { PageHeader } from "@/components/ui/page-header";
+import { JsonLd } from "@/components/seo/json-ld";
 import { ApiError } from "@/lib/api/client";
-import { getTags, getTagBySlug } from "@/lib/api/public";
+import { getTags, getTagBySlug, getSeoSettings } from "@/lib/api/public";
+import { safeFetch } from "@/lib/api/errors";
+import { buildBreadcrumbsFor } from "@/lib/seo/breadcrumbs";
+import { buildBreadcrumbSchema } from "@/lib/seo/json-ld";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -50,14 +55,44 @@ export default async function TagDetalhePage({ params }: PageProps) {
   try {
     tagDetail = await getTagBySlug(slug);
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) notFound();
+    if (error instanceof ApiError) {
+      if (error.status === 404) notFound();
+      if (
+        error.status === 503 &&
+        process.env.NEXT_PHASE === "phase-production-build"
+      )
+        notFound();
+    }
     throw error;
   }
 
+  const seo = await safeFetch(getSeoSettings, null, "tag.seo");
+
   const { tag, contents } = tagDetail;
+
+  const bcItems = buildBreadcrumbsFor(
+    "conteudos",
+    slug,
+    tag.name,
+    seo?.siteUrl,
+  );
 
   return (
     <>
+      <JsonLd data={buildBreadcrumbSchema(bcItems)} />
+
+      <div className="border-b border-[color:var(--border)]">
+        <Container className="py-3">
+          <Breadcrumbs
+            items={[
+              { label: "início", href: "/" },
+              { label: "conteúdos", href: "/conteudos" },
+              { label: slug },
+            ]}
+          />
+        </Container>
+      </div>
+
       <PageHeader
         eyebrow="Tag"
         title={tag.name}

@@ -2,12 +2,22 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { ReadingProgress } from "@/components/ui/reading-progress";
+import { JsonLd } from "@/components/seo/json-ld";
 import { ApiError } from "@/lib/api/client";
-import { getContents, getContentBySlug } from "@/lib/api/public";
+import {
+  getContents,
+  getContentBySlug,
+  getProfile,
+  getSeoSettings,
+} from "@/lib/api/public";
+import { safeFetch } from "@/lib/api/errors";
 import { getMdxComponents } from "@/mdx-components";
+import { buildBreadcrumbsFor } from "@/lib/seo/breadcrumbs";
+import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/seo/json-ld";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -73,11 +83,23 @@ export default async function LabDetalhePage({ params }: PageProps) {
   try {
     content = await getContentBySlug(slug);
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) notFound();
+    if (error instanceof ApiError) {
+      if (error.status === 404) notFound();
+      if (
+        error.status === 503 &&
+        process.env.NEXT_PHASE === "phase-production-build"
+      )
+        notFound();
+    }
     throw error;
   }
 
   if (content.type !== "LAB") notFound();
+
+  const [seo, profile] = await Promise.all([
+    safeFetch(getSeoSettings, null, "lab.seo"),
+    safeFetch(getProfile, null, "lab.profile"),
+  ]);
 
   const lab = parseLabFields(content.typeSpecificFields);
 
@@ -89,27 +111,31 @@ export default async function LabDetalhePage({ params }: PageProps) {
       }).format(new Date(content.publishedAt))
     : null;
 
+  const bcItems = buildBreadcrumbsFor(
+    "laboratorio",
+    slug,
+    content.title,
+    seo?.siteUrl,
+  );
+
   return (
     <>
+      {seo && profile && (
+        <JsonLd data={buildArticleSchema(content, profile, seo)} />
+      )}
+      <JsonLd data={buildBreadcrumbSchema(bcItems)} />
       <ReadingProgress />
 
       {/* BREADCRUMB */}
       <div className="border-b border-[color:var(--border)]">
         <Container className="py-3">
-          <nav
-            aria-label="Breadcrumb"
-            className="flex items-center gap-2 font-mono text-xs text-[color:var(--fg-faint)]"
-          >
-            <Link href="/" className="hover:text-[color:var(--fg)]">
-              início
-            </Link>
-            <span>/</span>
-            <Link href="/laboratorio" className="hover:text-[color:var(--fg)]">
-              laboratório
-            </Link>
-            <span>/</span>
-            <span className="text-[color:var(--fg-muted)]">{slug}</span>
-          </nav>
+          <Breadcrumbs
+            items={[
+              { label: "início", href: "/" },
+              { label: "laboratório", href: "/laboratorio" },
+              { label: slug },
+            ]}
+          />
         </Container>
       </div>
 

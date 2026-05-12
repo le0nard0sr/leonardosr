@@ -30,6 +30,7 @@ export async function Footer() {
           </p>
         </div>
         <div className="grid gap-3 md:text-right">
+          <Link href="/rss.xml">RSS</Link>
           <Link href="/privacidade">Privacidade</Link>
           <Link href="/termos">Termos</Link>
           {profile.contactEmailAlias ? (
