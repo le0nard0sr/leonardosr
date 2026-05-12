@@ -6,6 +6,13 @@ export const metadata: Metadata = {
   title: "Privacidade",
   description:
     "Política de privacidade do site leonardosr.com.br — tratamento de dados, LGPD e cookies.",
+  alternates: { canonical: "/privacidade" },
+  openGraph: {
+    title: "Privacidade | Leonardo Silva Ribeiro",
+    description:
+      "Política de privacidade do site leonardosr.com.br — tratamento de dados, LGPD e cookies.",
+    url: "https://leonardosr.com.br/privacidade",
+  },
 };
 
 export default function PrivacidadePage() {

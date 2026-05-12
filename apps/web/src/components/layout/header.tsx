@@ -6,6 +6,7 @@ const nav = [
   ["Início", "/"],
   ["Projetos", "/projetos"],
   ["Conteúdos", "/conteudos"],
+  ["Laboratório", "/laboratorio"],
   ["Arquiteturas", "/arquiteturas"],
   ["Stack", "/stack"],
   ["Sobre", "/sobre"],

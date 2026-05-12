@@ -102,7 +102,8 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 | —    | Concluído | Catch-all substituído por rotas dedicadas | `app/[[...slug]]/page.tsx` removido; 11 rotas dedicadas criadas                                                                                                                        | Nenhuma                                               | 2026-05-10         |
 | T054 | Concluído | OG image dinâmica                         | 8 arquivos `opengraph-image.tsx`: global, Sobre, Experiência, Stack, Projetos, Currículo, Contato e dinâmica por projeto (`/projetos/[slug]`) via `next/og`; todos com `force-dynamic` | fallback.png estático (pendência M5 — requer `sharp`) | 2026-05-11         |
 | —    | Concluído | ADR-006 criada                            | `docs/adr/006-metadata-og-fetch-ssr.md` registrando metadata, OG, cache SSR, safeFetch e o que fica para M5                                                                            | Nenhuma                                               | 2026-05-10         |
-| —    | Concluído | canonical + openGraph por rota            | `alternates.canonical` e bloco `openGraph` adicionados em todas as 8 pages; canonical fixo removido do layout raiz                                                                     | Nenhuma                                               | 2026-05-11         |
+| —    | Concluído | canonical + openGraph por rota            | `alternates.canonical` e bloco `openGraph` adicionados em 10 pages (todas as rotas públicas, incluindo Privacidade e Termos); canonical fixo removido do layout raiz                   | Nenhuma                                               | 2026-05-11         |
+| —    | Concluído | Placeholders M4 + nav corrigida           | `conteudos/page.tsx`, `laboratorio/page.tsx`, `arquiteturas/page.tsx` criados (eyebrow "Em breve"); `/laboratorio` adicionado ao `header.tsx`; nav sem links para 404                  | Nenhuma                                               | 2026-05-11         |
 
 ### Débitos técnicos registrados (a resolver no M5)
 
@@ -114,15 +115,17 @@ Status permitidos: `Backlog`, `Em andamento`, `Concluído`, `Bloqueado`.
 
 ### Gate final do M3
 
-- **Status:** Em andamento — aguardando validação manual.
+- **Status:** Concluído.
 - **Verificações executadas:**
   - `mvn -B -f apps/api/pom.xml test` → 22 testes unitários; BUILD SUCCESS.
   - `mvn -B -f apps/api/pom.xml spotless:check` → BUILD SUCCESS.
-  - `npm run web:lint` → sem erros.
-  - `npm run web:typecheck` → sem erros.
+  - `npm run web:lint` → sem erros (pós correções Codex).
+  - `npm run web:typecheck` → sem erros (pós correções Codex).
   - `npm run web:build` → BUILD SUCCESS; rotas geradas com OG por segmento.
   - PR draft aberto: [#4](https://github.com/le0nard0sr/leonardosr/pull/4)
-- **Pendências:** validação manual das rotas em browser; smoke do formulário de contato; verificação de canonical e OG via DevTools.
+  - Correções da revisão Codex (2ª rodada): canonical + openGraph em Privacidade e Termos; placeholders M4 para `/conteudos`, `/laboratorio`, `/arquiteturas`; `/laboratorio` adicionado à nav.
+- **Validação manual/smoke:** `/`, `/sobre`, `/experiencia`, `/stack`, `/curriculo`, `/contato`, `/projetos`, `/conteudos`, `/laboratorio`, `/arquiteturas`, `/privacidade`, `/termos` retornaram `200`; `/projetos/inexistente` retornou `404`; canonical validado em `/conteudos`, `/laboratorio`, `/arquiteturas`, `/privacidade`, `/termos`; OG images globais e segmentadas retornaram `200 image/png`; `POST /api/public/contact` válido retornou `received` com `id`; honeypot preenchido retornou `received` com `id: null`.
+- **Pendências:** nenhuma para o gate final do M3.
 - **Bloqueios:** nenhum.
 - **Última atualização:** 2026-05-11
 

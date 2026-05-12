@@ -6,6 +6,13 @@ export const metadata: Metadata = {
   title: "Termos de Uso",
   description:
     "Termos de uso do site leonardosr.com.br — direitos autorais, licenças e limitação de responsabilidade.",
+  alternates: { canonical: "/termos" },
+  openGraph: {
+    title: "Termos de Uso | Leonardo Silva Ribeiro",
+    description:
+      "Termos de uso do site leonardosr.com.br — direitos autorais, licenças e limitação de responsabilidade.",
+    url: "https://leonardosr.com.br/termos",
+  },
 };
 
 export default function TermosPage() {
